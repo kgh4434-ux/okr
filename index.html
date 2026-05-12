@@ -19,7 +19,11 @@ input,select,textarea{font-family:inherit}
 .lb{text-align:center;margin-bottom:24px}
 .lb h1{font-size:22px;font-weight:700;margin-bottom:4px;letter-spacing:-.02em}
 .lb p{color:var(--tx4);font-size:13px}
-.lul{display:grid;gap:6px;max-height:280px;overflow-y:auto;margin-bottom:14px}
+.lsearch{margin-bottom:10px}
+.lsearch input{width:100%;height:38px;background:#fff;border:1px solid var(--bd);border-radius:8px;padding:0 14px;font-size:13px;outline:none}
+.lsearch input:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.lul{display:grid;gap:6px;max-height:240px;overflow-y:auto;margin-bottom:14px}
+.lul-hint{font-size:11px;color:var(--tx5);text-align:center;padding:18px 0}
 .lu{display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:center;padding:10px 12px;background:#fff;border:1px solid var(--bd);border-radius:8px;cursor:pointer;transition:.12s}
 .lu:hover{background:var(--bgh)}
 .lu.sel{background:var(--acbg);border-color:var(--ac)}
@@ -117,6 +121,18 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 .rep-r:last-child{border-bottom:none}
 .rep-bar{height:8px;background:var(--bgm);border-radius:99px;overflow:hidden}
 .rep-bf{height:100%;border-radius:99px}
+/* Org shapes */
+.org-shapes{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:20px}
+.org-shape{padding:18px 22px;border:2px solid var(--bd);border-radius:14px;cursor:pointer;background:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:150px;transition:.15s;position:relative}
+.org-shape:hover{border-color:var(--bdt);transform:translateY(-1px)}
+.org-shape.on{border-color:var(--ac);background:var(--acbg)}
+.org-shape-c{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;margin-bottom:4px}
+.org-shape-n{font-size:14px;font-weight:600}
+.org-shape-l{font-family:var(--fm);font-size:11px;color:var(--tx4)}
+.org-shape-cnt{position:absolute;top:8px;right:10px;font-family:var(--fm);font-size:10px;background:var(--bgm);padding:2px 7px;border-radius:99px;color:var(--tx3);font-weight:500}
+.org-shape.all{background:var(--tx);border-color:var(--tx)}
+.org-shape.all .org-shape-n,.org-shape.all .org-shape-l{color:#fff}
+.org-shape.all .org-shape-cnt{background:rgba(255,255,255,.2);color:#fff}
 /* User table */
 .utbl{background:#fff;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
 .uth{display:grid;grid-template-columns:36px 1fr 1fr 110px 110px 50px;gap:14px;padding:12px 18px;background:var(--bgs);font-family:var(--fm);font-size:10px;color:var(--tx4);text-transform:uppercase;letter-spacing:.06em;font-weight:600;border-bottom:1px solid var(--bd)}
@@ -168,7 +184,8 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 @media(max-width:720px){.kgr{grid-template-columns:1fr}.top{padding:0 16px;gap:14px}.tab{padding:0 8px;font-size:12px}.brand{font-size:14px;margin-right:6px}main{padding:24px 18px}}
 </style></head><body>
 <div class="login" id="login"><div class="lc">
-<div class="lb"><h1>OKR Workspace</h1><p>로그인할 사용자를 선택해주세요</p></div>
+<div class="lb"><h1>OKR Workspace</h1><p>이름으로 검색 또는 사업부 선택</p></div>
+<div class="lsearch"><input type="text" id="userSearch" placeholder="이름 또는 사업부 검색 (예: 곽경훈, 익스)" autocomplete="off"></div>
 <div class="lul" id="userList"></div>
 <div class="lpw"><input type="password" id="pw" placeholder="비밀번호 (초기 1234)"></div>
 <div class="lerr" id="loginErr">비밀번호가 일치하지 않습니다</div>
@@ -276,7 +293,7 @@ function bizPct(bid){const ks=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&
 function coPct(){return Math.round(Object.keys(BIZ).reduce((s,b)=>s+bizPct(b),0)/Object.keys(BIZ).length)}
 
 // ============ LOGIN ============
-function renderUL(f=''){const fs=f.toLowerCase().trim();$('#userList').innerHTML=USERS.filter(u=>!fs||u.name.toLowerCase().includes(fs)).map(u=>`<div class="lu ${state.selU===u.id?'sel':''}" onclick="selU('${u.id}')"><div class="luav" style="background:${u.color}">${u.name[0]}</div><div><div class="lun">${u.name}</div><div class="lur">${u.bu?BU[u.bu].name:'전사'}</div></div><div class="lutag">${RL[u.role]}</div></div>`).join('')}
+function renderUL(f=''){const fs=f.toLowerCase().trim();if(!fs){$('#userList').innerHTML='<div class="lul-hint">검색창에 이름이나 사업부를 입력하세요<br>(예: "곽경훈", "익스", "관리자")</div>';return}const list=USERS.filter(u=>u.name.toLowerCase().includes(fs)||(u.bu&&BU[u.bu].name.toLowerCase().includes(fs))||(RL[u.role]||'').toLowerCase().includes(fs));$('#userList').innerHTML=list.length?list.map(u=>`<div class="lu ${state.selU===u.id?'sel':''}" onclick="selU('${u.id}')"><div class="luav" style="background:${u.color}">${u.name[0]}</div><div><div class="lun">${u.name}</div><div class="lur">${u.bu?BU[u.bu].name:'전사'}</div></div><div class="lutag">${RL[u.role]}</div></div>`).join(''):'<div class="lul-hint">검색 결과 없음</div>'}
 function selU(id){state.selU=id;renderUL()}
 function doLogin(){if($('#pw').value!=='1234'){$('#loginErr').classList.add('on');return}if(!state.selU){alert('사용자 선택');return}state.cu=state.selU;saveS();showApp()}
 function showApp(){$('#login').style.display='none';$('#app').classList.add('on');const u=uById(state.cu);$('#topUav').textContent=u.name[0];$('#topUav').style.background=u.color;const init=location.hash.replace('#','')||(u.role==='admin'||u.role==='exec'?'dash':'tree');go(init)}
@@ -373,10 +390,16 @@ ${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);return `<div class
 </div>`}
 
 // ============ USER ============
-function rUser(){const u=uById(state.cu);const can=canEditUser();return `<div class="ph"><div><h1>사용자</h1><p>${USERS.length}명 · ${can?'관리자/임원만 편집 가능':'조회만 가능'}</p></div>${can?'<div class="ph-r"><button class="btn btnp" onclick="newUser()">+ 사용자 추가</button></div>':''}</div>
+function rUser(){const u=uById(state.cu);const can=canEditUser();const f=state.userFilter;const filtered=f===null||f===undefined?USERS:f==='all'?USERS:f==='etc'?USERS.filter(u=>!u.bu):USERS.filter(u=>u.bu===f);const buCnt=id=>USERS.filter(u=>u.bu===id).length;const etcCnt=USERS.filter(u=>!u.bu).length;return `<div class="ph"><div><h1>사용자 · 조직도</h1><p>${USERS.length}명 · ${can?'관리자/임원만 편집 가능':'조회만 가능'}</p></div>${can?'<div class="ph-r"><button class="btn btnp" onclick="newUser()">+ 사용자 추가</button></div>':''}</div>
+<div class="org-shapes">
+<div class="org-shape all ${!f||f==='all'?'on':''}" onclick="filterUser(null)"><div class="org-shape-c" style="background:rgba(255,255,255,.2)">전</div><div class="org-shape-n">전체</div><div class="org-shape-l">All users</div><span class="org-shape-cnt">${USERS.length}</span></div>
+${Object.entries(BU).map(([id,b])=>`<div class="org-shape ${f===id?'on':''}" onclick="filterUser('${id}')"><div class="org-shape-c" style="background:${COLORS[b.biz?.[0]||Object.values(BIZ).find(x=>x.bu===id)?.id]||'#71717A'}">${b.name[0]}</div><div class="org-shape-n">${b.name.replace(' 사업부','')}</div><div class="org-shape-l">${b.name}</div><span class="org-shape-cnt">${buCnt(id)}</span></div>`).join('')}
+<div class="org-shape ${f==='etc'?'on':''}" onclick="filterUser('etc')"><div class="org-shape-c" style="background:#6366F1">전</div><div class="org-shape-n">전사</div><div class="org-shape-l">관리자·임원</div><span class="org-shape-cnt">${etcCnt}</span></div>
+</div>
 <div class="utbl"><div class="uth"><div></div><div>이름·이메일</div><div>사업부</div><div>역할</div><div>색상</div><div></div></div>
-${USERS.map(usr=>`<div class="urow" onclick="${can?`openUser('${usr.id}')`:''}"><div class="uavn" style="background:${usr.color}">${usr.name[0]}</div><div><div style="font-weight:500">${usr.name}</div><div class="usub">${usr.email||usr.id}</div></div><div>${usr.bu?BU[usr.bu].name:'전사'}</div><div><span class="urtag">${RL[usr.role]}</span></div><div class="mono" style="font-size:10px;color:var(--tx4)">${usr.color}</div><div style="text-align:right;color:var(--tx5)">${can?'›':''}</div></div>`).join('')}
+${filtered.length?filtered.map(usr=>`<div class="urow" onclick="${can?`openUser('${usr.id}')`:''}"><div class="uavn" style="background:${usr.color}">${usr.name[0]}</div><div><div style="font-weight:500">${usr.name}</div><div class="usub">${usr.email||usr.id}</div></div><div>${usr.bu?BU[usr.bu].name:'전사'}</div><div><span class="urtag">${RL[usr.role]}</span></div><div class="mono" style="font-size:10px;color:var(--tx4)">${usr.color}</div><div style="text-align:right;color:var(--tx5)">${can?'›':''}</div></div>`).join(''):'<div style="padding:32px;text-align:center;color:var(--tx4);font-size:13px">해당 사업부에 인원이 없습니다</div>'}
 </div>`}
+function filterUser(bu){state.userFilter=state.userFilter===bu?null:bu;go('user')}
 function newUser(){if(!canEditUser())return;state.editUid=null;$('#muT').textContent='사용자 추가';$('#muS').textContent='';$('#uN').value='';$('#uE').value='';$('#uR').value='member';$('#uBu').innerHTML='<option value="">전사</option>'+Object.entries(BU).map(([id,b])=>`<option value="${id}">${b.name}</option>`).join('');$('#uDel').style.display='none';$('#mUser').hidden=false}
 function openUser(id){if(!canEditUser())return;const u=uById(id);if(!u)return;state.editUid=id;$('#muT').textContent='사용자 편집';$('#muS').textContent=u.name;$('#uN').value=u.name;$('#uE').value=u.email||'';$('#uR').value=u.role;$('#uBu').innerHTML='<option value="">전사</option>'+Object.entries(BU).map(([bid,b])=>`<option value="${bid}" ${bid===u.bu?'selected':''}>${b.name}</option>`).join('');$('#uDel').style.display=id!==state.cu?'inline-flex':'none';$('#mUser').hidden=false}
 function saveUser(){const n=$('#uN').value.trim();if(!n)return alert('이름 입력');const r=$('#uR').value,bu=$('#uBu').value||null,e=$('#uE').value;if(state.editUid){const u=uById(state.editUid);u.name=n;u.email=e;u.role=r;u.bu=bu}else{const ni='u'+(Math.max(...USERS.map(u=>+u.id.slice(1)))+1);const cs=['#3B82F6','#10B981','#F59E0B','#A855F7','#EC4899'];USERS.push({id:ni,name:n,email:e,role:r,bu,color:cs[USERS.length%cs.length]})}saveS();closeM('mUser');go('user')}
@@ -401,14 +424,7 @@ function rSet(){const u=uById(state.cu);return `<div class="ph"><div><h1>설정<
 
 // ============ KR MODAL ============
 function openKr(id){const k=KRS[id];if(!k)return;state.currentKr=id;const p=pct(k);const ow=uById(k.owner);const ed=canEdit(id);const bid=k.biz||(KRS[k.parent]&&KRS[k.parent].biz);const bname=bid?BIZ[bid]?.name:'';$('#mkT').textContent=k.text;$('#mkS').textContent=`${bname} · ${id}`;$('#mkLf').textContent=ed?'':'🔒 수정 권한 없음';$('#mkSave').style.display=ed?'inline-flex':'none';
-$('#mkB').innerHTML=`
-${!ed?'<div class="lock-b">🔒 본인이 담당이 아니거나 권한이 없어 수정할 수 없습니다 — 조회만 가능</div>':''}
-<div class="knum">
-<div><div class="knl">진척률</div><div class="knv">${p}%</div></div>
-<div><div class="knl">현재</div><div class="knv">${k.cur}${k.unit}</div></div>
-<div><div class="knl">목표</div><div class="knv">${k.tgt}${k.unit}</div></div>
-<div><div class="knl">상태</div><div><span class="bd ${status(p)}">${status(p)==='s'?'달성':status(p)==='o'?'정상':status(p)==='w'?'주의':'위험'}</span></div></div>
-</div>
+$('#mkB').innerHTML=`${!ed?'<div class="lock-b">🔒 본인이 담당이 아니거나 권한이 없어 수정할 수 없습니다 — 조회만 가능</div>':''}<div class="knum"><div><div class="knl">진척률</div><div class="knv">${p}%</div></div><div><div class="knl">현재</div><div class="knv">${k.cur}${k.unit}</div></div><div><div class="knl">목표</div><div class="knv">${k.tgt}${k.unit}</div></div><div><div class="knl">상태</div><div><span class="bd ${status(p)}">${status(p)==='s'?'달성':status(p)==='o'?'정상':status(p)==='w'?'주의':'위험'}</span></div></div></div>
 <div class="fg"><label>KR 텍스트</label><input type="text" id="krT" value="${k.text.replace(/"/g,'&quot;')}" ${!ed?'disabled':''}></div>
 <div class="fg" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div><label>현재값</label><input type="number" step="any" id="krC" value="${k.cur}" ${!ed?'disabled':''}></div><div><label>목표값</label><input type="number" step="any" id="krTg" value="${k.tgt}" ${!ed?'disabled':''}></div><div><label>단위</label><input type="text" id="krU" value="${k.unit||''}" ${!ed?'disabled':''}></div></div>
 <div class="fg" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>타입</label><select id="krTy" ${!ed?'disabled':''}><option value="committed" ${k.type==='committed'?'selected':''}>필수 (committed)</option><option value="aspirational" ${k.type==='aspirational'?'selected':''}>도전 (aspirational)</option></select></div><div><label>담당자</label><select id="krO" ${!ed?'disabled':''}>${USERS.map(uu=>`<option value="${uu.id}" ${uu.id===k.owner?'selected':''}>${uu.name}</option>`).join('')}</select></div></div>
@@ -417,13 +433,13 @@ $('#mKr').hidden=false}
 function saveKr(){const id=state.currentKr;const k=KRS[id];if(!k||!canEdit(id))return;const oldCur=k.cur;k.text=$('#krT').value;k.cur=parseFloat($('#krC').value)||0;k.tgt=parseFloat($('#krTg').value)||1;k.unit=$('#krU').value;k.type=$('#krTy').value;k.owner=$('#krO').value;if(oldCur!==k.cur){if(!state.history[id])state.history[id]=[];state.history[id].push({at:new Date().toISOString().slice(0,16).replace('T',' '),cur:oldCur,newCur:k.cur,by:uById(state.cu)?.name||'-'})}saveS();closeM('mKr');go(location.hash.replace('#','')||'tree')}
 function closeM(id){$('#'+id).hidden=true}
 
-// ============ INIT ============
 loadS();
+$('#userSearch').addEventListener('input',e=>renderUL(e.target.value));
 $('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 $('#loginBtn').addEventListener('click',doLogin);
 renderUL();
 if(state.cu)showApp();else state.exp['CO-O']=true;
 $$('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.v)));
 window.addEventListener('hashchange',()=>{if(state.cu){const v=location.hash.replace('#','')||'dash';go(v)}});
-Object.assign(window,{go,selU,doLogin,logout,togE,expAll,selRow,openKr,saveKr,closeM,openBizDetail,newUser,openUser,saveUser,delUser});
+Object.assign(window,{go,selU,doLogin,logout,togE,expAll,selRow,openKr,saveKr,closeM,openBizDetail,newUser,openUser,saveUser,delUser,filterUser});
 </script></body></html>
