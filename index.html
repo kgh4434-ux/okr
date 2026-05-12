@@ -423,4 +423,7 @@ $('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 $('#loginBtn').addEventListener('click',doLogin);
 renderUL();
 if(state.cu)showApp();else state.exp['CO-O']=true;
-$$('.tab').forEach(t=>t.addEventListen
+$$('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.v)));
+window.addEventListener('hashchange',()=>{if(state.cu){const v=location.hash.replace('#','')||'dash';go(v)}});
+Object.assign(window,{go,selU,doLogin,logout,togE,expAll,selRow,openKr,saveKr,closeM,openBizDetail,newUser,openUser,saveUser,delUser});
+</script></body></html>
