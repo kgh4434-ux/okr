@@ -232,7 +232,7 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <button class="lbtn" id="loginBtn">로그인</button>
 <div class="lhint">초기 비밀번호: 1234</div>
 </div></div>
-<div class="modal" id="mPw"><div class="modal-c">
+<div class="modal" id="mPw" hidden><div class="modal-c">
 <div class="modal-h">비밀번호 변경</div>
 <input type="password" id="pwOld" placeholder="현재 비밀번호">
 <input type="password" id="pwNew" placeholder="새 비밀번호 (4자 이상)">
@@ -470,8 +470,8 @@ function rSet(){const u=uById(state.cu);const admin=u.role==='admin';const s=sta
 <div class="srow"><div><label>비밀번호 변경</label><div class="sub">본인 계정 비밀번호 변경</div></div><button class="btn" onclick="openPwChange()">비밀번호 변경</button></div>
 </div>`}
 
-function openPwChange(){$('#pwOld').value='';$('#pwNew').value='';$('#pwNew2').value='';$('#pwMsg').style.display='none';$('#mPw').classList.add('on')}
-function closePwChange(){$('#mPw').classList.remove('on')}
+function openPwChange(){$('#pwOld').value='';$('#pwNew').value='';$('#pwNew2').value='';$('#pwMsg').style.display='none';$('#mPw').hidden=false}
+function closePwChange(){$('#mPw').hidden=true}
 function savePw(){const old=$('#pwOld').value;const n1=$('#pwNew').value;const n2=$('#pwNew2').value;const cur=state.passwords&&state.passwords[state.cu]?state.passwords[state.cu]:'1234';if(old!==cur){$('#pwMsg').textContent='현재 비밀번호 불일치';$('#pwMsg').style.display='block';return}if(n1.length<4){$('#pwMsg').textContent='새 비밀번호 4자 이상';$('#pwMsg').style.display='block';return}if(n1!==n2){$('#pwMsg').textContent='새 비밀번호가 일치하지 않음';$('#pwMsg').style.display='block';return}if(!state.passwords)state.passwords={};state.passwords[state.cu]=n1;saveS();alert('변경 완료');closePwChange()}
 function saveSettings(){const u=uById(state.cu);if(u.role!=='admin'){alert('관리자만');return}state.settings.qStart=$('#setQStart').value;state.settings.qEnd=$('#setQEnd').value;state.settings.calcMode=$('#setCalc').value;state.settings.meetCycle=$('#setMeet').value;CO.period=state.settings.qStart.replace(/-/g,'.')+' — '+state.settings.qEnd.replace(/-/g,'.');saveS();alert('저장 완료');go('set')}
 
