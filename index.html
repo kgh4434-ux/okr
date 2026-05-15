@@ -157,6 +157,10 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 .modal-f{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 .modal input{width:100%;height:38px;border:1px solid var(--bd);border-radius:8px;padding:0 12px;font-size:13px;outline:none;margin-bottom:10px}
 .modal input:focus{border-color:var(--ac)}
+.src-tag{display:inline-flex;align-items:center;padding:1px 6px;border-radius:4px;font-family:var(--fm);font-size:9px;font-weight:600;margin-left:5px;letter-spacing:.02em}
+.src-tag.dummy{background:#F3F4F6;color:#71717A;border:1px solid #E4E4E7}
+.src-tag.real{background:#DBEAFE;color:#1E40AF;border:1px solid #BFDBFE}
+.src-tag.unset{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
 /* Org shapes */
 .org-shapes{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:20px}
 .org-shape{padding:18px 22px;border:2px solid var(--bd);border-radius:14px;cursor:pointer;background:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:150px;transition:.15s;position:relative}
@@ -273,26 +277,26 @@ lgt:{name:'로지스 (국내물류)',bu:'lg',obj:'3PL 신뢰도 있는 파트너
 erz:{name:'이레이즈 마케팅',bu:'er',obj:'AI 기반 자동화 및 서비스 자산화를 통한 수익 구조 혁신과 시장 지배력 강화',leadId:'u7'},
 fod:{name:'보따리푸드 (국내 e커머스)',bu:'fd',obj:'상품군 확대 및 판매 채널 효율화',leadId:'u10'}};
 const USERS=[
-{id:'u1',name:'곽경훈',email:'gawk@ex.com',role:'admin',bu:null,color:'#06B6D4'},
-{id:'u2',name:'김도현',email:'kim@ex.com',role:'manager',bu:'be',color:'#2563EB'},
-{id:'u3',name:'이수민',email:'lsm@ex.com',role:'member',bu:'be',color:'#3B82F6'},
-{id:'u4',name:'정민영',email:'jmy@ex.com',role:'member',bu:'be',color:'#60A5FA'},
-{id:'u5',name:'박지훈',email:'pjh@ex.com',role:'manager',bu:'lg',color:'#059669'},
-{id:'u6',name:'한지영',email:'hjy@ex.com',role:'member',bu:'lg',color:'#10B981'},
-{id:'u7',name:'윤하늘',email:'yhn@ex.com',role:'manager',bu:'er',color:'#DB2777'},
-{id:'u8',name:'임승준',email:'lsj@ex.com',role:'member',bu:'er',color:'#EC4899'},
-{id:'u9',name:'김다은',email:'kde@ex.com',role:'member',bu:'er',color:'#F472B6'},
-{id:'u10',name:'정세영',email:'jsy@ex.com',role:'manager',bu:'fd',color:'#7C3AED'},
-{id:'u11',name:'강도현',email:'kdh@ex.com',role:'member',bu:'fd',color:'#8B5CF6'},
-{id:'u12',name:'김민지',email:'kmj@ex.com',role:'manager',bu:'co',color:'#D97706'},
-{id:'u13',name:'홍성환',email:'hsh@ex.com',role:'member',bu:'co',color:'#F59E0B'},
-{id:'u14',name:'서경호',email:'sgh@ex.com',role:'member',bu:'co',color:'#FBBF24'},
-{id:'u15',name:'이유란',email:'lyr@ex.com',role:'manager',bu:'bz',color:'#0EA5E9'},
-{id:'u16',name:'강여울',email:'kyu@ex.com',role:'member',bu:'bz',color:'#38BDF8'},
-{id:'u17',name:'윤숙진',email:'ysj@ex.com',role:'member',bu:'bz',color:'#7DD3FC'},
-{id:'u18',name:'대표이사',email:'ceo@ex.com',role:'admin',bu:null,color:'#6366F1'},
-{id:'u19',name:'정우현 임원',email:'jwh@ex.com',role:'exec',bu:null,color:'#9333EA'},
-{id:'u20',name:'한지석 임원',email:'hjs@ex.com',role:'exec',bu:null,color:'#A855F7'}];
+{id:'u1',name:'곽경훈',email:'gawk@ex.com',role:'admin',bu:null,color:'#06B6D4',src:'real'},
+{id:'u2',name:'김도현',email:'kim@ex.com',role:'manager',bu:'be',color:'#2563EB',src:'dummy'},
+{id:'u3',name:'이수민',email:'lsm@ex.com',role:'member',bu:'be',color:'#3B82F6',src:'dummy'},
+{id:'u4',name:'정민영',email:'jmy@ex.com',role:'member',bu:'be',color:'#60A5FA',src:'dummy'},
+{id:'u5',name:'박지훈',email:'pjh@ex.com',role:'manager',bu:'lg',color:'#059669',src:'dummy'},
+{id:'u6',name:'한지영',email:'hjy@ex.com',role:'member',bu:'lg',color:'#10B981',src:'dummy'},
+{id:'u7',name:'윤하늘',email:'yhn@ex.com',role:'manager',bu:'er',color:'#DB2777',src:'dummy'},
+{id:'u8',name:'임승준',email:'lsj@ex.com',role:'member',bu:'er',color:'#EC4899',src:'dummy'},
+{id:'u9',name:'김다은',email:'kde@ex.com',role:'member',bu:'er',color:'#F472B6',src:'dummy'},
+{id:'u10',name:'정세영',email:'jsy@ex.com',role:'manager',bu:'fd',color:'#7C3AED',src:'dummy'},
+{id:'u11',name:'강도현',email:'kdh@ex.com',role:'member',bu:'fd',color:'#8B5CF6',src:'dummy'},
+{id:'u12',name:'김민지',email:'kmj@ex.com',role:'manager',bu:'co',color:'#D97706',src:'dummy'},
+{id:'u13',name:'홍성환',email:'hsh@ex.com',role:'member',bu:'co',color:'#F59E0B',src:'dummy'},
+{id:'u14',name:'서경호',email:'sgh@ex.com',role:'member',bu:'co',color:'#FBBF24',src:'dummy'},
+{id:'u15',name:'이유란',email:'lyr@ex.com',role:'manager',bu:'bz',color:'#0EA5E9',src:'real'},
+{id:'u16',name:'강여울',email:'kyu@ex.com',role:'member',bu:'bz',color:'#38BDF8',src:'real'},
+{id:'u17',name:'윤숙진',email:'ysj@ex.com',role:'member',bu:'bz',color:'#7DD3FC',src:'real'},
+{id:'u18',name:'대표이사',email:'ceo@ex.com',role:'admin',bu:null,color:'#6366F1',src:'dummy'},
+{id:'u19',name:'정우현 임원',email:'jwh@ex.com',role:'exec',bu:null,color:'#9333EA',src:'dummy'},
+{id:'u20',name:'한지석 임원',email:'hjs@ex.com',role:'exec',bu:null,color:'#A855F7',src:'dummy'}];
 const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상화 및 성장 모드 전환',progress:62,target:75,period:'2026.04.01 — 2026.06.30',daysLeft:50,krs:[
 {id:'CO-KR-1',biz:'exp'},{id:'CO-KR-2',biz:'lgt'},{id:'CO-KR-3',biz:'erz'},{id:'CO-KR-4',biz:'fod'}]};
 const KRS={
@@ -333,7 +337,7 @@ function bizPct(bid){const ks=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&
 function coPct(){return Math.round(Object.keys(BIZ).reduce((s,b)=>s+bizPct(b),0)/Object.keys(BIZ).length)}
 
 // ============ LOGIN ============
-function renderUL(f=''){const fs=f.toLowerCase().trim();if(!fs){$('#userList').innerHTML='<div class="lul-hint">검색창에 이름이나 사업부를 입력하세요<br>(예: "곽경훈", "익스", "관리자")</div>';return}const list=USERS.filter(u=>u.name.toLowerCase().includes(fs)||(u.bu&&BU[u.bu].name.toLowerCase().includes(fs))||(RL[u.role]||'').toLowerCase().includes(fs));$('#userList').innerHTML=list.length?list.map(u=>`<div class="lu ${state.selU===u.id?'sel':''}" onclick="selU('${u.id}')"><div class="luav" style="background:${u.color}">${u.name[0]}</div><div><div class="lun">${u.name}</div><div class="lur">${u.bu?BU[u.bu].name:'전사'}</div></div><div class="lutag">${RL[u.role]}</div></div>`).join(''):'<div class="lul-hint">검색 결과 없음</div>'}
+function renderUL(f=''){const fs=f.toLowerCase().trim();if(!fs){$('#userList').innerHTML='<div class="lul-hint">검색창에 이름이나 사업부를 입력하세요<br>(예: "곽경훈", "익스", "관리자")</div>';return}const list=USERS.filter(u=>u.name.toLowerCase().includes(fs)||(u.bu&&BU[u.bu].name.toLowerCase().includes(fs))||(RL[u.role]||'').toLowerCase().includes(fs));$('#userList').innerHTML=list.length?list.map(u=>`<div class="lu ${state.selU===u.id?'sel':''}" onclick="selU('${u.id}')"><div class="luav" style="background:${u.color}">${u.name[0]}</div><div><div class="lun">${u.name}</div><div class="lur">${u.bu?BU[u.bu].name:'전사'}</div></div><div class="lutag">${RL[u.role]}<span class="src-tag ${u.src||'dummy'}">${u.src==='real'?'실제':'더미'}</span></div></div>`).join(''):'<div class="lul-hint">검색 결과 없음</div>'}
 function selU(id){state.selU=id;renderUL()}
 function doLogin(){if(!state.selU){alert('사용자 선택');return}const pw=state.passwords&&state.passwords[state.selU]?state.passwords[state.selU]:'1234';if($('#pw').value!==pw){$('#loginErr').classList.add('on');return}state.cu=state.selU;saveS();showApp()}
 function showApp(){$('#login').style.display='none';$('#app').classList.add('on');const u=uById(state.cu);$('#topUav').textContent=u.name[0];$('#topUav').style.background=u.color;if(u.bu){const myBiz=Object.entries(BIZ).find(([id,b])=>b.bu===u.bu);if(myBiz){const ck=CO.krs.find(c=>c.biz===myBiz[0]);if(ck){state.exp['CO-O']=true;state.exp[ck.id]=true;state.focusBiz=myBiz[0]}}}const init=location.hash.replace('#','')||(u.role==='admin'||u.role==='exec'?'dash':'tree');go(init)}
@@ -352,7 +356,7 @@ function rDash(){const cp=coPct();let total=0,ok=0,w=0,d=0;Object.entries(KRS).f
 <div class="kc"><div class="kc-l">전체 사용자</div><div class="kc-v mono">${users}<small>명</small></div><div class="kc-d">${Object.keys(BU).length}개 사업부 · 활성 100%</div></div>
 </div>
 <div class="bgrid">${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);return `<div class="bcard" onclick="go('biz');setTimeout(()=>openBizDetail('${id}'),100)">
-<div class="bch"><div><div class="bcn"><span class="rd" style="background:${COLORS[id]}"></span>${b.name}</div><div class="bcd">${BU[b.bu].name} · 리더 ${uById(b.leadId)?.name||'-'}</div></div></div>
+<div class="bch"><div><div class="bcn"><span class="rd" style="background:${COLORS[id]}"></span>${b.name}</div><div class="bcd">${BU[b.bu].name} · 리더 ${uById(b.leadId)?.name||'-'}<span class="src-tag ${uById(b.leadId)?.src||'dummy'}">${uById(b.leadId)?.src==='real'?'실제':'더미'}</span></div></div></div>
 <div class="bcobj">${b.obj}</div>
 <div class="bcp"><div><span class="bcpv mono">${p}</span><span class="bcpu">%</span></div></div>
 <div class="bcpb"><div class="bcpbf" style="width:${p}%;background:${COLORS[id]}"></div></div>
@@ -386,7 +390,7 @@ ${Object.entries(KRS).filter(([id,k])=>k.parent===ck.id).map(([id,k])=>{const p=
 <div class="expand ${iks.length?(ikex?'open':''):'leaf'}" onclick="event.stopPropagation();togE('${id}')">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.5"></div>
 <div class="rt"><span>${k.text}</span><span class="rid">${id}</span><span class="bd ${k.type==='committed'?'com':'asp'}">${k.type==='committed'?'필수':'도전'}</span>${k.flag==='pending'?'<span class="kr-flag pending">📝 피드백 필요</span>':''}${k.flag==='health'?'<span class="kr-flag health">🛡 정성 지표</span>':''}${k.linkedTo&&k.linkedTo.length?`<span class="kr-flag link">🔗 ${k.linkedTo.length}개 연결</span>`:''}</div>
-<div class="rown"><span class="av" style="background:${ow?.color}">${ow?.name?.[0]||'?'}</span>${ow?.name||'-'}</div>
+<div class="rown"><span class="av" style="background:${ow?.color}">${ow?.name?.[0]||'?'}</span>${ow?.name||'-'}<span class="src-tag ${ow?.src||'dummy'}">${ow?.src==='real'?'실':'더'}</span></div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${p}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(p)}">${p}%</span></div>
 </div>
 ${iks.length?`<div class="children" ${!ikex?'hidden':''}>
@@ -395,7 +399,7 @@ ${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=u
 <div class="expand leaf">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.3"></div>
 <div class="rt"><span>${ik.text}</span><span class="rid">${ikid}</span><span class="rtag">개인 KR</span></div>
-<div class="rown"><span class="av" style="background:${iow?.color}">${iow?.name?.[0]||'?'}</span>${iow?.name||'-'}</div>
+<div class="rown"><span class="av" style="background:${iow?.color}">${iow?.name?.[0]||'?'}</span>${iow?.name||'-'}<span class="src-tag ${iow?.src||'dummy'}">${iow?.src==='real'?'실':'더'}</span></div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${ip}%;background:${COLORS[ck.biz]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${ip}%</span></div>
 </div>`}).join('')}
 </div>`:''}
@@ -437,7 +441,7 @@ ${Object.entries(BU).map(([id,b])=>`<div class="org-shape ${f===id?'on':''}" onc
 <div class="org-shape ${f==='etc'?'on':''}" onclick="filterUser('etc')"><div class="org-shape-c" style="background:#6366F1">전</div><div class="org-shape-n">전사</div><div class="org-shape-l">관리자·임원</div><span class="org-shape-cnt">${etcCnt}</span></div>
 </div>
 <div class="utbl"><div class="uth"><div></div><div>이름·이메일</div><div>사업부</div><div>역할</div><div>색상</div><div></div></div>
-${filtered.length?filtered.map(usr=>`<div class="urow" onclick="${can?`openUser('${usr.id}')`:''}"><div class="uavn" style="background:${usr.color}">${usr.name[0]}</div><div><div style="font-weight:500">${usr.name}</div><div class="usub">${usr.email||usr.id}</div></div><div>${usr.bu?BU[usr.bu].name:'전사'}</div><div><span class="urtag">${RL[usr.role]}</span></div><div class="mono" style="font-size:10px;color:var(--tx4)">${usr.color}</div><div style="text-align:right;color:var(--tx5)">${can?'›':''}</div></div>`).join(''):'<div style="padding:32px;text-align:center;color:var(--tx4);font-size:13px">해당 사업부에 인원이 없습니다</div>'}
+${filtered.length?filtered.map(usr=>`<div class="urow" onclick="${can?`openUser('${usr.id}')`:''}"><div class="uavn" style="background:${usr.color}">${usr.name[0]}</div><div><div style="font-weight:500">${usr.name}<span class="src-tag ${usr.src||'dummy'}">${usr.src==='real'?'실제':'더미'}</span></div><div class="usub">${usr.email||usr.id}</div></div><div>${usr.bu?BU[usr.bu].name:'전사'}</div><div><span class="urtag">${RL[usr.role]}</span></div><div class="mono" style="font-size:10px;color:var(--tx4)">${usr.color}</div><div style="text-align:right;color:var(--tx5)">${can?'›':''}</div></div>`).join(''):'<div style="padding:32px;text-align:center;color:var(--tx4);font-size:13px">해당 사업부에 인원이 없습니다</div>'}
 </div>`}
 function filterUser(bu){state.userFilter=state.userFilter===bu?null:bu;go('user')}
 function newUser(){if(!canEditUser())return;state.editUid=null;$('#muT').textContent='사용자 추가';$('#muS').textContent='';$('#uN').value='';$('#uE').value='';$('#uR').value='member';$('#uBu').innerHTML='<option value="">전사</option>'+Object.entries(BU).map(([id,b])=>`<option value="${id}">${b.name}</option>`).join('');$('#uDel').style.display='none';$('#mUser').hidden=false}
@@ -473,7 +477,7 @@ function saveSettings(){const u=uById(state.cu);if(u.role!=='admin'){alert('관�
 
 // ============ KR MODAL ============
 function openKr(id){const k=KRS[id];if(!k)return;state.currentKr=id;const p=pct(k);const ow=uById(k.owner);const ed=canEdit(id);const bid=k.biz||(KRS[k.parent]&&KRS[k.parent].biz);const bname=bid?BIZ[bid]?.name:'';$('#mkT').textContent=k.text;$('#mkS').textContent=`${bname} · ${id}`;$('#mkLf').textContent=ed?'':'🔒 수정 권한 없음';$('#mkSave').style.display=ed?'inline-flex':'none';
-$('#mkB').innerHTML=`${!ed?'<div class="lock-b">🔒 본인이 담당이 아니거나 권한이 없어 수정할 수 없습니다 — 조회만 가능</div>':''}<div class="knum"><div><div class="knl">진척률</div><div class="knv">${p}%</div></div><div><div class="knl">현재</div><div class="knv">${k.cur}${k.unit}</div></div><div><div class="knl">목표</div><div class="knv">${k.tgt}${k.unit}</div></div><div><div class="knl">상태</div><div><span class="bd ${status(p)}">${status(p)==='s'?'달성':status(p)==='o'?'정상':status(p)==='w'?'주의':'위험'}</span></div></div></div>
+$('#mkB').innerHTML=`${!ed?'<div class="lock-b">🔒 본인이 담당이 아니거나 권한이 없어 수정할 수 없습니다 — 조회만 가능</div>':''}<div class="knum"><div><div class="knl">진척률</div><div class="knv">${p}%</div></div><div><div class="knl">현재</div><div class="knv">${k.cur}${k.unit}<span class="src-tag ${k.cur===0?'unset':'real'}">${k.cur===0?'미등록':'실제'}</span></div></div><div><div class="knl">목표</div><div class="knv">${k.tgt}${k.unit}</div></div><div><div class="knl">상태</div><div><span class="bd ${status(p)}">${status(p)==='s'?'달성':status(p)==='o'?'정상':status(p)==='w'?'주의':'위험'}</span></div></div></div>
 <div class="fg"><label>KR 텍스트</label><input type="text" id="krT" value="${k.text.replace(/"/g,'&quot;')}" ${!ed?'disabled':''}></div>
 <div class="fg" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div><label>현재값</label><input type="number" step="any" id="krC" value="${k.cur}" ${!ed?'disabled':''}></div><div><label>목표값</label><input type="number" step="any" id="krTg" value="${k.tgt}" ${!ed?'disabled':''}></div><div><label>단위</label><input type="text" id="krU" value="${k.unit||''}" ${!ed?'disabled':''}></div></div>
 <div class="fg" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>타입</label><select id="krTy" ${!ed?'disabled':''}><option value="committed" ${k.type==='committed'?'selected':''}>필수 (committed)</option><option value="aspirational" ${k.type==='aspirational'?'selected':''}>도전 (aspirational)</option></select></div><div><label>담당자</label><select id="krO" ${!ed?'disabled':''}>${USERS.map(uu=>`<option value="${uu.id}" ${uu.id===k.owner?'selected':''}>${uu.name}</option>`).join('')}</select></div></div>
