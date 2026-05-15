@@ -131,6 +131,9 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 .pct-color.ok{color:var(--stx)}
 .pct-color.warn{color:var(--wtx)}
 .pct-color.risk{color:var(--dtx)}
+.pct-badge.none{background:#F3F4F6;color:#6B7280}
+.pct-color.none{color:#6B7280}
+.kc-meter-f.none{background:#9CA3AF}
 .trend{display:inline-flex;align-items:center;gap:2px;font-family:var(--fm);font-size:11px;color:var(--tx4);margin-left:4px}
 .trend.up{color:var(--stx)}
 .trend.down{color:var(--dtx)}
@@ -323,9 +326,11 @@ function loadS(){try{const s=localStorage.getItem(STORE);if(!s)return;const d=JS
 function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS}))}catch(e){}}
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const uById=id=>USERS.find(u=>u.id===id);
-const pctCls=p=>p>=100?'over':p>=70?'ok':p>=40?'warn':'risk';
-const pctBadge=p=>{if(p>=100)return '↑ 초과';if(p>=70)return '정상';if(p>=40)return '주의';return '↓ 위험'};
-const pct=k=>{if(!k||!k.tgt)return 0;let r;if(k.tgt>0&&k.cur>k.tgt)r=Math.round((k.tgt/k.cur)*100);else r=Math.round((k.cur/k.tgt)*100);return Math.min(100,Math.max(0,r))};
+const pctCls=p=>p<0?'none':p>=100?'over':p>=70?'ok':p>=40?'warn':'risk';
+const pctBadge=p=>{if(p<0)return '미등록';if(p>=100)return '↑ 초과';if(p>=70)return '정상';if(p>=40)return '주의';return '↓ 위험'};
+const pct=k=>{if(!k||!k.tgt)return -1;if(k.cur===0)return -1;let r;if(k.tgt>0&&k.cur>k.tgt)r=Math.round((k.tgt/k.cur)*100);else r=Math.round((k.cur/k.tgt)*100);return Math.min(100,Math.max(0,r))};
+const pctTxt=p=>p<0?'—':p+'%';
+const pctW=p=>Math.max(0,p);
 const status=p=>p>=95?'s':p>=70?'o':p>=40?'w':'d';
 // 권한
 function canEdit(krId){const u=uById(state.cu);if(!u)return false;const k=KRS[krId];if(!k)return false;if(u.role==='admin')return true;if(k.owner===state.cu)return true;if(u.role==='exec'&&!krId.includes('IK'))return true;return false}
@@ -333,9 +338,9 @@ function canEditUser(){const u=uById(state.cu);return u&&(u.role==='admin'||u.ro
 // 자식 KR 집계 진척
 function avgChildren(krId){const k=KRS[krId];if(!k||!k.children||!k.children.length)return null;const cs=k.children.map(c=>pct(KRS[c]));return Math.round(cs.reduce((a,b)=>a+b,0)/cs.length)}
 // 사업 진척: 사업 KR들의 평균
-function bizPct(bid){const ks=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&!id.includes('-IK-'));if(!ks.length)return 0;return Math.round(ks.reduce((s,[id,k])=>s+pct(k),0)/ks.length)}
+function bizPct(bid){const ks=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&!id.includes('-IK-'));if(!ks.length)return -1;const ps=ks.map(([id,k])=>pct(k)).filter(p=>p>=0);if(!ps.length)return -1;return Math.round(ps.reduce((a,b)=>a+b,0)/ps.length)}
 // 전사 진척: 사업 평균
-function coPct(){return Math.round(Object.keys(BIZ).reduce((s,b)=>s+bizPct(b),0)/Object.keys(BIZ).length)}
+function coPct(){const ps=Object.keys(BIZ).map(b=>bizPct(b)).filter(p=>p>=0);if(!ps.length)return -1;return Math.round(ps.reduce((a,b)=>a+b,0)/ps.length)}
 
 // ============ LOGIN ============
 function renderUL(f=''){const fs=f.toLowerCase().trim();if(!fs){$('#userList').innerHTML='<div class="lul-hint">검색창에 이름이나 사업부를 입력하세요<br>(예: "곽경훈", "익스", "관리자")</div>';return}const list=USERS.filter(u=>u.name.toLowerCase().includes(fs)||(u.bu&&BU[u.bu].name.toLowerCase().includes(fs))||(RL[u.role]||'').toLowerCase().includes(fs));$('#userList').innerHTML=list.length?list.map(u=>`<div class="lu ${state.selU===u.id?'sel':''}" onclick="selU('${u.id}')"><div class="luav" style="background:${u.color}">${u.name[0]}</div><div><div class="lun">${u.name}</div><div class="lur">${u.bu?BU[u.bu].name:'전사'}</div></div><div class="lutag">${RL[u.role]}<span class="src-tag ${u.src||'dummy'}">${u.src==='real'?'실제':'더미'}</span></div></div>`).join(''):'<div class="lul-hint">검색 결과 없음</div>'}
@@ -351,7 +356,7 @@ function go(v){const tabs=['dash','tree','biz','rep','user','set'];if(!tabs.incl
 function rDash(){const cp=coPct();let total=0,ok=0,w=0,d=0;Object.entries(KRS).forEach(([id,k])=>{if(id.includes('-IK-'))return;total++;const p=pct(k);if(p>=70)ok++;else if(p>=40)w++;else d++});const users=USERS.length;return `
 <div class="ph"><div><h1>대시보드</h1><p>${CO.period} · D-${dLeft} · ${total}개 사업 KR</p></div></div>
 <div class="kgr">
-<div class="kc"><div class="kc-l">전사 평균 진척도</div><div class="kc-v mono pct-color ${pctCls(cp)}">${cp}<small>%</small><span class="pct-badge ${pctCls(cp)}">${pctBadge(cp)}</span></div><div class="kc-meter"><div class="kc-meter-f ${pctCls(cp)}" style="width:${Math.min(100,cp)}%"></div></div><div class="kc-d">6개 사업 평균 · 전주 대비 <span class="trend up">↑ +4pt</span></div></div>
+<div class="kc"><div class="kc-l">전사 평균 진척도</div><div class="kc-v mono pct-color ${pctCls(cp)}">${cp<0?'—':cp}<small>${cp<0?'':'%'}</small><span class="pct-badge ${pctCls(cp)}">${pctBadge(cp)}</span></div><div class="kc-meter"><div class="kc-meter-f ${pctCls(cp)}" style="width:${pctW(cp)}%"></div></div><div class="kc-d">6개 사업 평균 · 전주 대비 <span class="trend up">↑ +4pt</span></div></div>
 <div class="kc"><div class="kc-l">정상·달성 KR</div><div class="kc-v mono pct-color ok">${ok}<small>/${total}</small></div><div class="kc-meter"><div class="kc-meter-f ok" style="width:${ok/total*100}%"></div></div><div class="kc-d">달성률 <b>${Math.round(ok/total*100)}%</b> · 70% 이상</div></div>
 <div class="kc"><div class="kc-l">주의·위험 KR</div><div class="kc-v mono pct-color risk">${w+d}<small>/${total}</small></div><div class="kc-meter"><div class="kc-meter-f risk" style="width:${(w+d)/total*100}%"></div></div><div class="kc-d"><span class="pct-badge warn">주의 ${w}</span><span class="pct-badge risk">위험 ${d}</span></div></div>
 <div class="kc"><div class="kc-l">전체 사용자</div><div class="kc-v mono">${users}<small>명</small></div><div class="kc-d">${Object.keys(BU).length}개 사업부 · 활성 100%</div></div>
@@ -373,7 +378,7 @@ function rTree(){const cp=coPct();return `
 <div class="expand ${state.exp['CO-O']?'open':''}" onclick="event.stopPropagation();togE('CO-O')">▶</div>
 <div class="rd" style="background:var(--tx)"></div>
 <div class="rt"><b>${CO.obj}</b><span class="rtag">전사 OBJECTIVE</span>${CO.subObj?`<div style="font-size:11px;color:var(--tx4);margin-top:4px;font-weight:400">(실무) ${CO.subObj}</div>`:''}</div>
-<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${cp}%"></div></div><span class="rpct pct-color ${pctCls(cp)}">${cp}%</span></div>
+<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(cp)}%"></div></div><span class="rpct pct-color ${pctCls(cp)}">${pctTxt(cp)}</span></div>
 </div>
 <div class="children" ${!state.exp['CO-O']?'hidden':''}>
 ${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);const kex=state.exp[ck.id];return `
@@ -382,7 +387,7 @@ ${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);const kex=state.ex
 <div class="expand ${kex?'open':''}" onclick="event.stopPropagation();togE('${ck.id}')">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]}"></div>
 <div class="rt"><b>${b.obj}</b><span class="rid">${ck.id}</span><span class="biz-tag" style="background:${COLORS[ck.biz]}1A;color:${COLORS[ck.biz]};border-color:${COLORS[ck.biz]}40">▎ ${b.name}</span></div>
-<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${bp}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(bp)}">${bp}%</span><span class="pct-badge ${pctCls(bp)}" style="margin-left:4px">${pctBadge(bp)}</span></div>
+<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(bp)}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(bp)}">${pctTxt(bp)}</span><span class="pct-badge ${pctCls(bp)}" style="margin-left:4px">${pctBadge(bp)}</span></div>
 </div>
 <div class="children" ${!kex?'hidden':''}>
 ${Object.entries(KRS).filter(([id,k])=>k.parent===ck.id).map(([id,k])=>{const p=pct(k);const ow=uById(k.owner);const iks=k.children||[];const ikex=state.exp[id];return `
@@ -392,7 +397,7 @@ ${Object.entries(KRS).filter(([id,k])=>k.parent===ck.id).map(([id,k])=>{const p=
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.5"></div>
 <div class="rt"><span>${k.text}</span><span class="rid">${id}</span><span class="bd ${k.type==='committed'?'com':'asp'}">${k.type==='committed'?'필수':'도전'}</span>${k.flag==='pending'?'<span class="kr-flag pending">📝 피드백 필요</span>':''}${k.flag==='health'?'<span class="kr-flag health">🛡 정성 지표</span>':''}${k.linkedTo&&k.linkedTo.length?`<span class="kr-flag link">🔗 ${k.linkedTo.length}개 연결</span>`:''}</div>
 <div class="rown">${ow?`<span class="av" style="background:${ow.color}">${ow.name[0]}</span>${ow.name}<span class="src-tag ${ow.src||'dummy'}">${ow.src==='real'?'실':'더'}</span>`:'<span style="color:var(--tx5);font-size:11px">미배정</span>'}</div>
-<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${p}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(p)}">${p}%</span></div>
+<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(p)}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(p)}">${pctTxt(p)}</span></div>
 </div>
 ${iks.length?`<div class="children" ${!ikex?'hidden':''}>
 ${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=uById(ik.owner);return `
@@ -401,7 +406,7 @@ ${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=u
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.3"></div>
 <div class="rt"><span>${ik.text}</span><span class="rid">${ikid}</span><span class="rtag">개인 KR</span></div>
 <div class="rown"><span class="av" style="background:${iow?.color}">${iow?.name?.[0]||'?'}</span>${iow?.name||'-'}<span class="src-tag ${iow?.src||'dummy'}">${iow?.src==='real'?'실':'더'}</span></div>
-<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${ip}%;background:${COLORS[ck.biz]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${ip}%</span></div>
+<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(ip)}%;background:${COLORS[ck.biz]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${pctTxt(ip)}</span></div>
 </div>`}).join('')}
 </div>`:''}
 </div>`}).join('')||'<div class="empty-c">(13일 회의 후 등록 예정)</div>'}
@@ -419,19 +424,19 @@ function rBiz(){return `<div class="ph"><div><h1>사업별 OKR</h1><p>각 사업
 <div class="bgrid">${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);const krs=Object.entries(KRS).filter(([kid,k])=>k.biz===id&&!kid.includes('-IK-'));return `<div class="bcard" onclick="openBizDetail('${id}')">
 <div class="bch"><div><div class="bcn"><span class="rd" style="background:${COLORS[id]}"></span>${b.name}</div><div class="bcd">${BU[b.bu].name} · 리더 ${uById(b.leadId)?.name||'-'} · ${krs.length} KR</div></div></div>
 <div class="bcobj">${b.obj}</div>
-<div class="bcp"><div><span class="bcpv mono">${p}</span><span class="bcpu">%</span></div></div>
-<div class="bcpb"><div class="bcpbf" style="width:${p}%;background:${COLORS[id]}"></div></div>
-<div class="bcm"><span>${krs.length}개 KR</span><span class="mono">${p}%</span></div>
+<div class="bcp"><div><span class="bcpv mono">${p<0?'—':p}</span><span class="bcpu">${p<0?'':'%'}</span></div></div>
+<div class="bcpb"><div class="bcpbf" style="width:${pctW(p)}%;background:${COLORS[id]}"></div></div>
+<div class="bcm"><span>${krs.length}개 KR</span><span class="mono">${pctTxt(p)}</span></div>
 </div>`}).join('')}</div>`}
 function openBizDetail(bid){const ck=CO.krs.find(c=>c.biz===bid);state.exp={};state.exp['CO-O']=true;if(ck){state.exp[ck.id]=true;state.focusBiz=bid}saveS();go('tree')}
 
 // ============ REPORT ============
 function rRep(){return `<div class="ph"><div><h1>진행 리포트</h1><p>달성률 기록 — KR 수치화 비율 자동 계산</p></div></div>
 <div class="rep"><h3>사업별 진척도</h3>
-${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);return `<div class="rep-r"><div style="display:flex;align-items:center;gap:8px"><span class="rd" style="background:${COLORS[id]}"></span><span>${b.name}</span></div><div class="rep-bar"><div class="rep-bf" style="width:${p}%;background:${COLORS[id]}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(p)}">${p}% <span class="pct-badge ${pctCls(p)}">${pctBadge(p)}</span></div></div>`}).join('')}
+${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);return `<div class="rep-r"><div style="display:flex;align-items:center;gap:8px"><span class="rd" style="background:${COLORS[id]}"></span><span>${b.name}</span></div><div class="rep-bar"><div class="rep-bf" style="width:${pctW(p)}%;background:${COLORS[id]}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(p)}">${pctTxt(p)} <span class="pct-badge ${pctCls(p)}">${pctBadge(p)}</span></div></div>`}).join('')}
 </div>
 <div class="rep"><h3>전사 KR 진척도 (= 사업 Objective)</h3>
-${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);return `<div class="rep-r"><div><div style="font-weight:500">${ck.id}</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">${b.obj}</div></div><div class="rep-bar"><div class="rep-bf" style="width:${bp}%;background:${COLORS[ck.biz]}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(bp)}">${bp}% <span class="pct-badge ${pctCls(bp)}">${pctBadge(bp)}</span></div></div>`}).join('')}
+${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);return `<div class="rep-r"><div><div style="font-weight:500">${ck.id}</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">${b.obj}</div></div><div class="rep-bar"><div class="rep-bf" style="width:${pctW(bp)}%;background:${COLORS[ck.biz]}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(bp)}">${pctTxt(bp)} <span class="pct-badge ${pctCls(bp)}">${pctBadge(bp)}</span></div></div>`}).join('')}
 </div>`}
 
 // ============ USER ============
