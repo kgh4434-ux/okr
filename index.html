@@ -87,6 +87,7 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 .rt{flex:1;min-width:0;display:flex;align-items:center;gap:10px;font-size:13px}
 .rt b{font-weight:600}
 .rid{font-family:var(--fm);font-size:11px;color:var(--tx5);font-weight:500}
+.biz-tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid;letter-spacing:-.01em}
 .rtag{font-family:var(--fm);font-size:10px;color:var(--tx4);background:var(--bgm);padding:2px 6px;border-radius:4px}
 .row.root .rt{font-size:15px;font-weight:600}
 .row.lvl1 .rt{font-size:14px;font-weight:600}
@@ -316,7 +317,7 @@ const KRS={
 'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'• 오아시스, 토스 등 고효율 채널 입점 및 시장 안착',period:'진행 중 ~ 12월',cur:0,tgt:11,unit:'개',type:'committed',owner:null,parent:'CO-KR-4',children:[]},
 'FOD-KR-2':{biz:'fod',text:'[수익] 누계 수익률 개선 및 비용 효율화 (-120% → -40% 이내)',note:'• 연간 홍보 예산(2,700만 원)내에서 전략적 마케팅 시도 및 손실률 방어 집중\n• 2026년은 구축과 안정에 집중 (로지스 작업비 미반영), 2027년 흑자 전환 기반 마련',period:'진행 중 ~ 12월',cur:-120,tgt:-40,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-4',children:[]},
 'FOD-KR-3':{biz:'fod',text:'[연동] 로지스 현장 회전율 기여 (12월, 일 평균 주문 50건 달성)',note:'• 로지스의 초기 가동률을 지원하는 완충 역할 수행 및 출고 퀄리티 개선',period:'진행 중 ~ 12월',cur:0,tgt:50,unit:'건',type:'committed',owner:null,parent:'CO-KR-4',children:[],linkedTo:['LGT-KR-1']}};
-const STORE='okr-v2';
+const STORE='okr-v3';
 let state={cu:null,selU:null,exp:{},sel:null,history:{}};
 function loadS(){try{const s=localStorage.getItem(STORE);if(!s)return;const d=JSON.parse(s);if(d._krs){Object.entries(d._krs).forEach(([id,k])=>{if(KRS[id])Object.assign(KRS[id],k);else KRS[id]=k});delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>USERS.push(u));delete d._users}state={...state,...d}}catch(e){}}
 function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS}))}catch(e){}}
@@ -380,7 +381,7 @@ ${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);const kex=state.ex
 <div class="row lvl1 ${state.sel===ck.id?'sel':''}" onclick="selRow('${ck.id}')">
 <div class="expand ${kex?'open':''}" onclick="event.stopPropagation();togE('${ck.id}')">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]}"></div>
-<div class="rt"><b>${b.obj}</b><span class="rid">${ck.id}</span><span class="rtag">사업 O · ${b.name}</span></div>
+<div class="rt"><b>${b.obj}</b><span class="rid">${ck.id}</span><span class="biz-tag" style="background:${COLORS[ck.biz]}1A;color:${COLORS[ck.biz]};border-color:${COLORS[ck.biz]}40">▎ ${b.name}</span></div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${bp}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(bp)}">${bp}%</span><span class="pct-badge ${pctCls(bp)}" style="margin-left:4px">${pctBadge(bp)}</span></div>
 </div>
 <div class="children" ${!kex?'hidden':''}>
