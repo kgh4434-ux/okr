@@ -274,8 +274,8 @@ const BU={be:{name:'보따리익스 사업부'},lg:{name:'로지스 사업부'},
 const COLORS={exp:'#2563EB',lgt:'#059669',erz:'#DB2777',fod:'#7C3AED',coc:'#D97706',biz:'#0EA5E9'};
 const BIZ={
 exp:{name:'보따리익스 (해외물류)',bu:'be',obj:'매출 증대 및 물류 회전율 극대화',leadId:null},
-lgt:{name:'로지스 (국내물류)',bu:'lg',obj:'3PL 신뢰도 있는 파트너로 자리잡고 운영 체계 고도화',leadId:null},
-erz:{name:'이레이즈 마케팅',bu:'er',obj:'AI 기반 자동화 및 서비스 자산화를 통한 수익 구조 혁신과 시장 지배력 강화',leadId:null},
+lgt:{name:'로지스 (국내물류)',bu:'lg',obj:'3PL 신뢰도 있는 파트너로 자리잡고 운영 체계를 고도화',leadId:null},
+erz:{name:'이레이즈 마케팅',bu:'er',obj:'\"AI 기반 자동화 및 서비스 자산화를 통한 수익 구조 혁신과 시장 지배력 강화\"',leadId:null},
 fod:{name:'보따리푸드 (국내 e커머스)',bu:'fd',obj:'상품군 확대 및 판매 채널 효율화',leadId:null}};
 const USERS=[
 {id:'u1',name:'곽경훈',email:'gawk@ex.com',role:'admin',bu:null,color:'#06B6D4',src:'real'},
@@ -298,7 +298,7 @@ const USERS=[
 {id:'u18',name:'대표이사',email:'ceo@ex.com',role:'admin',bu:null,color:'#6366F1',src:'dummy'},
 {id:'u19',name:'정우현 임원',email:'jwh@ex.com',role:'exec',bu:null,color:'#9333EA',src:'dummy'},
 {id:'u20',name:'한지석 임원',email:'hjs@ex.com',role:'exec',bu:null,color:'#A855F7',src:'dummy'}];
-const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상화 및 성장 모드 전환',progress:62,target:75,period:'2026.04.01 — 2026.06.30',daysLeft:50,krs:[
+const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상화 및 성장 모드 전환',subObj:'각 사업부별 KR을 \'측정 가능한 실무 지표\'로 전환하여 목표 달성',progress:62,target:75,period:'2026.04.01 — 2026.06.30',daysLeft:50,krs:[
 {id:'CO-KR-1',biz:'exp'},{id:'CO-KR-2',biz:'lgt'},{id:'CO-KR-3',biz:'erz'},{id:'CO-KR-4',biz:'fod'}]};
 const KRS={
 'MKT-KR-1':{biz:'erz',text:'매체관리 수임료 150%',note:'',period:'',cur:0,tgt:150,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
@@ -372,7 +372,7 @@ function rTree(){const cp=coPct();return `
 <div class="row root ${state.sel==='CO-O'?'sel':''}" onclick="selRow('CO-O')">
 <div class="expand ${state.exp['CO-O']?'open':''}" onclick="event.stopPropagation();togE('CO-O')">▶</div>
 <div class="rd" style="background:var(--tx)"></div>
-<div class="rt"><b>${CO.obj}</b><span class="rtag">전사 OBJECTIVE</span></div>
+<div class="rt"><b>${CO.obj}</b><span class="rtag">전사 OBJECTIVE</span>${CO.subObj?`<div style="font-size:11px;color:var(--tx4);margin-top:4px;font-weight:400">(실무) ${CO.subObj}</div>`:''}</div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${cp}%"></div></div><span class="rpct pct-color ${pctCls(cp)}">${cp}%</span></div>
 </div>
 <div class="children" ${!state.exp['CO-O']?'hidden':''}>
