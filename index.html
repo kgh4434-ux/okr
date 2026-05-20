@@ -266,11 +266,11 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <div class="mb">
 <div class="fg"><label>이름</label><input type="text" id="uN"></div>
 <div class="fg"><label>이메일</label><input type="text" id="uE"></div>
-<div class="fg"><label>역할</label><select id="uR"><option value="member">매니저</option><option value="manager">리더</option><option value="exec">임원</option><option value="admin">관리자</option></select></div>
+<div class="fg"><label>역할</label><select id="uR"><option value="staff">스탭</option><option value="admin">관리자</option></select></div>
 <div class="fg"><label>사업부</label><select id="uBu"></select></div>
 </div><div class="mf"><button class="btn btn-d" id="uDel" onclick="delUser()" style="margin-right:auto">삭제</button><button class="btn" onclick="closeM('mUser')">취소</button><button class="btn btnp" onclick="saveUser()">저장</button></div></div></div>
 <script>
-const RL={admin:'관리자',exec:'임원',manager:'리더',member:'매니저'};
+const RL={admin:'관리자',staff:'스탭'};
 const Q_START=new Date('2026-04-01'),TODAY=new Date('2026-05-12'),Q_END=new Date('2026-06-30');
 const dLeft=Math.ceil((Q_END-TODAY)/86400000);
 const BU={be:{name:'보따리익스 사업부'},lg:{name:'로지스 사업부'},er:{name:'이레이즈 마케팅 사업부'},fd:{name:'보따리푸드 사업부'},co:{name:'코코박스 사업부 (회의 대기)',wait:true},bz:{name:'비즈니스 사업부 (회의 대기)',wait:true}};
@@ -280,6 +280,8 @@ exp:{name:'보따리익스 (해외물류)',bu:'be',obj:'매출 증대 및 물류
 lgt:{name:'로지스 (국내물류)',bu:'lg',obj:'3PL 신뢰도 있는 파트너로 자리잡고 운영 체계를 고도화',leadId:null},
 erz:{name:'이레이즈 마케팅',bu:'er',obj:'\"AI 기반 자동화 및 서비스 자산화를 통한 수익 구조 혁신과 시장 지배력 강화\"',leadId:null},
 fod:{name:'보따리푸드 (국내 e커머스)',bu:'fd',obj:'상품군 확대 및 판매 채널 효율화',leadId:null}};
+const GROUPS={g_exp:{name:'익스 전체',biz:'exp',color:'#2563EB'},g_lgt:{name:'로지스 전체',biz:'lgt',color:'#059669'},g_erz:{name:'마케팅 전체',biz:'erz',color:'#DB2777'},g_fod:{name:'푸드 전체',biz:'fod',color:'#7C3AED'}};
+function ownerInfo(oid){if(!oid)return null;if(String(oid).startsWith('g_')){const g=GROUPS[oid];return g?{type:'group',name:g.name,color:g.color,initial:'群'}:null}const u=uById(oid);return u?{type:'user',name:u.name,color:u.color,initial:u.name[0]}:null}
 const USERS=[
 {id:'u1',name:'곽경훈',email:'',role:'admin',bu:null,color:'#06B6D4',src:'real'},
 {id:'u2',name:'박병훈',email:'',role:'admin',bu:null,color:'#059669',src:'real'},
@@ -289,22 +291,29 @@ const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상
 {id:'CO-KR-1',biz:'exp'},{id:'CO-KR-2',biz:'lgt'},{id:'CO-KR-3',biz:'erz'},{id:'CO-KR-4',biz:'fod'}]};
 const KRS={
 'MKT-KR-1':{biz:'erz',text:'매체관리 수임료 150%',note:'',period:'',cur:0,tgt:150,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
-'MKT-KR-2':{biz:'erz',text:'마케팅 소스 자산화를 통한 수익상품의 매출대비 매출이익 85% 목표',note:'',period:'',cur:0,tgt:85,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-3',children:[]},
-'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
+'MKT-KR-2':{biz:'erz',text:'마케팅 소스 자산화를 통한 수익상품의 매출대비 매출이익 85% 목표',note:'',period:'',cur:0,tgt:85,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-3',children:['MKT-IK-1']},
+'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:['MKT-IK-2']},
 'MKT-KR-4':{biz:'erz',text:'수익상품 모델로 영업 달성에 대한 수치 피드백 필요',note:'',period:'',cur:0,tgt:100,unit:'',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
-'LGT-KR-1':{biz:'lgt',text:'신규 3PL 고객사 5개사 계약 체결 (월 출고량 1,000건 이상 기준)',note:'• 익스 KR5 : 스테이지랩스 (익스→국내) 공유\n• 푸드 KR3 : 자체물량 증대\n• 인바운드 영업자 : 박병훈 으로 지정',period:'',cur:0,tgt:5,unit:'사',type:'committed',owner:null,parent:'CO-KR-2',children:[],linkedTo:['EXP-KR-5','FOD-KR-3']},
-'LGT-KR-2':{biz:'lgt',text:'출고 정확도 99% 이상 유지 (오배송률 1% 이하)',note:'',period:'',cur:0,tgt:99,unit:'%',type:'committed',owner:null,parent:'CO-KR-2',children:[]},
+'LGT-KR-1':{biz:'lgt',text:'신규 3PL 고객사 5개사 계약 체결 (월 출고량 1,000건 이상 기준)',note:'• 익스 KR5 : 스테이지랩스 (익스→국내) 공유\n• 푸드 KR3 : 자체물량 증대\n• 인바운드 영업자 : 박병훈 으로 지정',period:'',cur:0,tgt:5,unit:'사',type:'committed',owner:null,parent:'CO-KR-2',children:['LGT-IK-1'],linkedTo:['EXP-KR-5','FOD-KR-3']},
+'LGT-KR-2':{biz:'lgt',text:'출고 정확도 99% 이상 유지 (오배송률 1% 이하)',note:'',period:'',cur:0,tgt:99,unit:'%',type:'committed',owner:null,parent:'CO-KR-2',children:['LGT-IK-2']},
 'LGT-KR-3':{biz:'lgt',text:'국내택배 매출 상향 (C2C 보따리택배 사이트 이용자 1,000명 목표)',note:'',period:'',cur:0,tgt:1000,unit:'명',type:'committed',owner:null,parent:'CO-KR-2',children:[]},
 'LGT-KR-4':{biz:'lgt',text:'근무자 이탈로 인한 안정화 최우선 (수치목표 불가)',note:'',period:'',cur:0,tgt:100,unit:'',type:'aspirational',owner:null,parent:'CO-KR-2',children:[],flag:'health'},
-'EXP-KR-1':{biz:'exp',text:'[통합 매출] 2026년 전체 매출(개인+기업) 전년 대비 115% 달성',note:'• 2025년 매출(약 56.8억) 기반, 2026년 총매출 약 65.4억 원 목표\n• 기업(B2B) 매출 로드맵 완수 (12월 월 매출 1.15억 도달 및 연간 10억 확보)\n• 전체 매출 내 비중 10% 점유',period:'진행 중 ~ 12월',cur:0,tgt:115,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
+'EXP-KR-1':{biz:'exp',text:'[통합 매출] 2026년 전체 매출(개인+기업) 전년 대비 115% 달성',note:'• 2025년 매출(약 56.8억) 기반, 2026년 총매출 약 65.4억 원 목표\n• 기업(B2B) 매출 로드맵 완수 (12월 월 매출 1.15억 도달 및 연간 10억 확보)\n• 전체 매출 내 비중 10% 점유',period:'진행 중 ~ 12월',cur:0,tgt:115,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:['EXP-IK-1']},
 'EXP-KR-2':{biz:'exp',text:'[가속화/품질] 전산 도입 후 결제 대기 리드타임 10% 단축 및 보상 50% 절감',note:'• 전산 자동 알림(결제 독려)을 통한 회전 속도 개선 및 오포장 방지로 재작업 리소스 차단\n• 연간 보상 건수 50건 이하 관리로 회전율 저해 요소 제거 및 프리미엄 신뢰도 구축',period:'6월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
 'EXP-KR-3':{biz:'exp',text:'[확장] 신규 전략 국가(6개국) 매출 비중 10% 확보',note:'• 유럽(영/독/프) 및 아시아(홍/대/싱)',period:'8월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
 'EXP-KR-4':{biz:'exp',text:'[인프라] 구매대행 리뉴얼 및 개인 서비스 전산화',note:'• 기존 구매대행 페이지 리뉴얼 및 홍보 진행 (코코 준비 1단계 진입)\n• 개인 고객 서비스 전산화 완료 시점에 맞춰 마케팅 재정비 및 전산 반영',period:'진행 중 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
-'EXP-KR-5':{biz:'exp',text:'[효율] 익스-로지스 현장팀 공동 운영 및 3PL 영업',note:'• 현장 인력 유기적 협업 및 프로세스 최적화를 통한 운영비 10% 절감 목표\n• 공동 운영 및 외부 3PL 화주사 3개 유치 목표',period:'6월 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[],linkedTo:['LGT-KR-1']},
-'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'• 오아시스, 토스 등 고효율 채널 입점 및 시장 안착',period:'진행 중 ~ 12월',cur:0,tgt:11,unit:'개',type:'committed',owner:null,parent:'CO-KR-4',children:[]},
+'EXP-KR-5':{biz:'exp',text:'[효율] 익스-로지스 현장팀 공동 운영 및 3PL 영업',note:'• 현장 인력 유기적 협업 및 프로세스 최적화를 통한 운영비 10% 절감 목표\n• 공동 운영 및 외부 3PL 화주사 3개 유치 목표',period:'6월 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:['EXP-IK-2'],linkedTo:['LGT-KR-1']},
+'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'• 오아시스, 토스 등 고효율 채널 입점 및 시장 안착',period:'진행 중 ~ 12월',cur:0,tgt:11,unit:'개',type:'committed',owner:null,parent:'CO-KR-4',children:['FOD-IK-1']},
 'FOD-KR-2':{biz:'fod',text:'[수익] 누계 수익률 개선 및 비용 효율화 (-120% → -40% 이내)',note:'• 연간 홍보 예산(2,700만 원)내에서 전략적 마케팅 시도 및 손실률 방어 집중\n• 2026년은 구축과 안정에 집중 (로지스 작업비 미반영), 2027년 흑자 전환 기반 마련',period:'진행 중 ~ 12월',cur:-120,tgt:-40,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-4',children:[]},
-'FOD-KR-3':{biz:'fod',text:'[연동] 로지스 현장 회전율 기여 (12월, 일 평균 주문 50건 달성)',note:'• 로지스의 초기 가동률을 지원하는 완충 역할 수행 및 출고 퀄리티 개선',period:'진행 중 ~ 12월',cur:0,tgt:50,unit:'건',type:'committed',owner:null,parent:'CO-KR-4',children:[],linkedTo:['LGT-KR-1']}};
-const STORE='okr-v3';
+'FOD-KR-3':{biz:'fod',text:'[연동] 로지스 현장 회전율 기여 (12월, 일 평균 주문 50건 달성)',note:'• 로지스의 초기 가동률을 지원하는 완충 역할 수행 및 출고 퀄리티 개선',period:'진행 중 ~ 12월',cur:0,tgt:50,unit:'건',type:'committed',owner:null,parent:'CO-KR-4',children:[],linkedTo:['LGT-KR-1']},
+'EXP-IK-1':{biz:'exp',text:'B2B 인바운드 영업 신규 2사 확보 (월 매출 2천만 원 이상)',note:'',period:'6월 ~ 12월',cur:0,tgt:2,unit:'사',type:'committed',owner:'u1',parent:'EXP-KR-1',children:[]},
+'EXP-IK-2':{biz:'exp',text:'스테이지랩스 익스→국내 공유 운영 안정화',note:'그룹 KR — 익스 전체 참여',period:'진행 중',cur:0,tgt:100,unit:'%',type:'committed',owner:'g_exp',parent:'EXP-KR-5',children:[]},
+'LGT-IK-1':{biz:'lgt',text:'인바운드 영업 전담 (3PL 화주 2사 컨택 진행)',note:'',period:'진행 중 ~ 12월',cur:0,tgt:2,unit:'사',type:'committed',owner:'u2',parent:'LGT-KR-1',children:[]},
+'LGT-IK-2':{biz:'lgt',text:'출고 정확도 모니터링 시스템 구축',note:'',period:'7월 ~ 9월',cur:0,tgt:100,unit:'%',type:'committed',owner:'u2',parent:'LGT-KR-2',children:[]},
+'MKT-IK-1':{biz:'erz',text:'수익상품 패키지 3종 설계 및 영업 자료화',note:'',period:'6월 ~ 8월',cur:0,tgt:3,unit:'종',type:'committed',owner:'u3',parent:'MKT-KR-2',children:[]},
+'MKT-IK-2':{biz:'erz',text:'마케팅 전체 — 업무 프로세스 가이드화 (KR 정의 워크숍 2회)',note:'그룹 KR',period:'5월 ~ 6월',cur:0,tgt:2,unit:'회',type:'committed',owner:'g_erz',parent:'MKT-KR-3',children:[]},
+'FOD-IK-1':{biz:'fod',text:'토스/오아시스 신규 입점 완료',note:'',period:'진행 중 ~ 9월',cur:0,tgt:2,unit:'채널',type:'committed',owner:'u4',parent:'FOD-KR-1',children:[]}};
+const STORE='okr-v4';
 let state={cu:null,selU:null,exp:{},sel:null,history:{}};
 function loadS(){try{const s=localStorage.getItem(STORE);if(!s)return;const d=JSON.parse(s);if(d._krs){Object.entries(d._krs).forEach(([id,k])=>{if(KRS[id])Object.assign(KRS[id],k);else KRS[id]=k});delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>USERS.push(u));delete d._users}state={...state,...d}}catch(e){}}
 function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS}))}catch(e){}}
@@ -317,8 +326,8 @@ const pctTxt=p=>p<0?'—':p+'%';
 const pctW=p=>Math.max(0,p);
 const status=p=>p>=95?'s':p>=70?'o':p>=40?'w':'d';
 // 권한
-function canEdit(krId){const u=uById(state.cu);if(!u)return false;const k=KRS[krId];if(!k)return false;if(u.role==='admin')return true;if(k.owner===state.cu)return true;if(u.role==='exec'&&!krId.includes('IK'))return true;return false}
-function canEditUser(){const u=uById(state.cu);return u&&(u.role==='admin'||u.role==='exec')}
+function canEdit(krId){const u=uById(state.cu);if(!u)return false;const k=KRS[krId];if(!k)return false;if(u.role==='admin')return true;if(k.owner&&!String(k.owner).startsWith('g_')&&k.owner===state.cu)return true;return false}
+function canEditUser(){const u=uById(state.cu);return u&&u.role==='admin'}
 // 자식 KR 집계 진척
 function avgChildren(krId){const k=KRS[krId];if(!k||!k.children||!k.children.length)return null;const cs=k.children.map(c=>pct(KRS[c]));return Math.round(cs.reduce((a,b)=>a+b,0)/cs.length)}
 // 사업 진척: 사업 KR들의 평균
@@ -346,7 +355,7 @@ function rDash(){const cp=coPct();let total=0,ok=0,w=0,d=0;Object.entries(KRS).f
 <div class="kc"><div class="kc-l">전체 사용자</div><div class="kc-v mono">${users}<small>명</small></div><div class="kc-d">${Object.keys(BU).length}개 사업부 · 활성 100%</div></div>
 </div>
 <div class="bgrid">${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);return `<div class="bcard" onclick="go('biz');setTimeout(()=>openBizDetail('${id}'),100)">
-<div class="bch"><div><div class="bcn"><span class="rd" style="background:${COLORS[id]}"></span>${b.name}</div><div class="bcd">${BU[b.bu].name}${uById(b.leadId)?` · 리더 ${uById(b.leadId).name}<span class="src-tag ${uById(b.leadId).src||'dummy'}">${uById(b.leadId).src==='real'?'실제':'더미'}</span>`:' · 리더 미배정'}</div></div></div>
+<div class="bch"><div><div class="bcn"><span class="rd" style="background:${COLORS[id]}"></span>${b.name}</div><div class="bcd">${BU[b.bu].name}${uById(b.leadId)?` · 리더 ${uById(b.leadId).name}`:' · 리더 미배정'}</div></div></div>
 <div class="bcobj">${b.obj}</div>
 <div class="bcp"><div><span class="bcpv mono">${p}</span><span class="bcpu">%</span></div></div>
 <div class="bcpb"><div class="bcpbf" style="width:${p}%;background:${COLORS[id]}"></div></div>
@@ -374,22 +383,22 @@ ${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);const kex=state.ex
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(bp)}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(bp)}">${pctTxt(bp)}</span><span class="pct-badge ${pctCls(bp)}" style="margin-left:4px">${pctBadge(bp)}</span></div>
 </div>
 <div class="children" ${!kex?'hidden':''}>
-${Object.entries(KRS).filter(([id,k])=>k.parent===ck.id).map(([id,k])=>{const p=pct(k);const ow=uById(k.owner);const iks=k.children||[];const ikex=state.exp[id];return `
+${Object.entries(KRS).filter(([id,k])=>k.parent===ck.id).map(([id,k])=>{const p=pct(k);const ow=ownerInfo(k.owner);const iks=k.children||[];const ikex=state.exp[id];return `
 <div class="node">
 <div class="row ${state.sel===id?'sel':''}" onclick="selRow('${id}');openKr('${id}')">
 <div class="expand ${iks.length?(ikex?'open':''):'leaf'}" onclick="event.stopPropagation();togE('${id}')">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.5"></div>
 <div class="rt"><span>${k.text}</span><span class="rid">${id}</span><span class="bd ${k.type==='committed'?'com':'asp'}">${k.type==='committed'?'필수':'도전'}</span>${k.flag==='pending'?'<span class="kr-flag pending">📝 피드백 필요</span>':''}${k.flag==='health'?'<span class="kr-flag health">🛡 정성 지표</span>':''}${k.linkedTo&&k.linkedTo.length?`<span class="kr-flag link">🔗 ${k.linkedTo.length}개 연결</span>`:''}</div>
-<div class="rown">${ow?`<span class="av" style="background:${ow.color}">${ow.name[0]}</span>${ow.name}<span class="src-tag ${ow.src||'dummy'}">${ow.src==='real'?'실':'더'}</span>`:'<span style="color:var(--tx5);font-size:11px">미배정</span>'}</div>
+<div class="rown">${ow?`<span class="av" style="background:${ow.color}">${ow.initial}</span>${ow.name}${ow.type==='group'?'<span class="kr-flag link" style="margin-left:4px">그룹</span>':''}`:'<span style="color:var(--tx5);font-size:11px">미배정</span>'}</div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(p)}%;background:${COLORS[ck.biz]}"></div></div><span class="rpct pct-color ${pctCls(p)}">${pctTxt(p)}</span></div>
 </div>
 ${iks.length?`<div class="children" ${!ikex?'hidden':''}>
-${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=uById(ik.owner);return `
+${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=ownerInfo(ik.owner);return `
 <div class="row" onclick="openKr('${ikid}')">
 <div class="expand leaf">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.3"></div>
-<div class="rt"><span>${ik.text}</span><span class="rid">${ikid}</span><span class="rtag">개인 KR</span></div>
-<div class="rown"><span class="av" style="background:${iow?.color}">${iow?.name?.[0]||'?'}</span>${iow?.name||'-'}<span class="src-tag ${iow?.src||'dummy'}">${iow?.src==='real'?'실':'더'}</span></div>
+<div class="rt"><span>${ik.text}</span><span class="rid">${ikid}</span><span class="rtag">하위 KR</span></div>
+<div class="rown">${iow?`<span class="av" style="background:${iow.color}">${iow.initial}</span>${iow.name}${iow.type==='group'?'<span class="kr-flag link" style="margin-left:4px">그룹</span>':''}`:'-'}</div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(ip)}%;background:${COLORS[ck.biz]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${pctTxt(ip)}</span></div>
 </div>`}).join('')}
 </div>`:''}
@@ -404,7 +413,24 @@ function expAll(o){if(o){state.exp['CO-O']=true;CO.krs.forEach(ck=>{state.exp[ck
 function selRow(id){state.sel=id;saveS()}
 
 // ============ BIZ ============
-function rBiz(){return `<div class="ph"><div><h1>사업별 OKR</h1><p>각 사업의 목표와 진행 현황</p></div></div>
+function rBizDetail(bid){const b=BIZ[bid];const bkrs=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&!id.includes('-IK-')&&!id.includes('-GK-'));const bp=bizPct(bid);return `<div class="ph"><div><div style="display:flex;align-items:center;gap:10px"><span onclick="backToBizList()" style="cursor:pointer;color:var(--tx3);font-size:13px">← 사업 목록</span><h1 style="margin:0">${b.name}</h1></div><p style="margin-top:6px"><span class="rd" style="background:${COLORS[bid]};display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:6px"></span>${b.obj}</p></div><div class="ph-r"><span class="mono pct-color ${pctCls(bp)}" style="font-size:22px;font-weight:700">${pctTxt(bp)}</span><span class="pct-badge ${pctCls(bp)}">${pctBadge(bp)}</span></div></div>
+<div class="tree">${bkrs.map(([id,k])=>{const p=pct(k);const ow=ownerInfo(k.owner);const iks=k.children||[];const ikex=state.exp[id]!==false;return `<div class="node">
+<div class="row root ${state.sel===id?'sel':''}" onclick="selRow('${id}');openKr('${id}')">
+<div class="expand ${iks.length?(ikex?'open':''):'leaf'}" onclick="event.stopPropagation();togE('${id}')">▶</div>
+<div class="rd" style="background:${COLORS[bid]}"></div>
+<div class="rt"><b>${k.text}</b><span class="rid">${id}</span><span class="bd ${k.type==='committed'?'com':'asp'}">${k.type==='committed'?'필수':'도전'}</span></div>
+<div class="rown">${ow?`<span class="av" style="background:${ow.color}">${ow.initial}</span>${ow.name}${ow.type==='group'?'<span class="kr-flag link" style="margin-left:4px">그룹</span>':''}`:'<span style="color:var(--tx5);font-size:11px">미배정</span>'}</div>
+<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(p)}%;background:${COLORS[bid]}"></div></div><span class="rpct pct-color ${pctCls(p)}">${pctTxt(p)}</span></div>
+</div>
+${iks.length?`<div class="children" ${!ikex?'hidden':''}>${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=ownerInfo(ik.owner);return `<div class="row" onclick="openKr('${ikid}')">
+<div class="expand leaf">▶</div>
+<div class="rd" style="background:${COLORS[bid]};opacity:.5"></div>
+<div class="rt"><span>${ik.text}</span><span class="rid">${ikid}</span><span class="rtag">하위 KR</span></div>
+<div class="rown">${iow?`<span class="av" style="background:${iow.color}">${iow.initial}</span>${iow.name}${iow.type==='group'?'<span class="kr-flag link" style="margin-left:4px">그룹</span>':''}`:'-'}</div>
+<div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(ip)}%;background:${COLORS[bid]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${pctTxt(ip)}</span></div>
+</div>`}).join('')}</div>`:''}
+</div>`}).join('')}</div>`}
+function rBiz(){if(state.bizDetail&&BIZ[state.bizDetail])return rBizDetail(state.bizDetail);return `<div class="ph"><div><h1>사업별 OKR</h1><p>각 사업의 목표와 진행 현황 · 클릭 시 미니 조직도</p></div></div>
 <div class="bgrid">${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);const krs=Object.entries(KRS).filter(([kid,k])=>k.biz===id&&!kid.includes('-IK-'));return `<div class="bcard" onclick="openBizDetail('${id}')">
 <div class="bch"><div><div class="bcn"><span class="rd" style="background:${COLORS[id]}"></span>${b.name}</div><div class="bcd">${BU[b.bu].name} · 리더 ${uById(b.leadId)?.name||'-'} · ${krs.length} KR</div></div></div>
 <div class="bcobj">${b.obj}</div>
@@ -412,7 +438,8 @@ function rBiz(){return `<div class="ph"><div><h1>사업별 OKR</h1><p>각 사업
 <div class="bcpb"><div class="bcpbf" style="width:${pctW(p)}%;background:${COLORS[id]}"></div></div>
 <div class="bcm"><span>${krs.length}개 KR</span><span class="mono">${pctTxt(p)}</span></div>
 </div>`}).join('')}</div>`}
-function openBizDetail(bid){const ck=CO.krs.find(c=>c.biz===bid);state.exp={};state.exp['CO-O']=true;if(ck){state.exp[ck.id]=true;state.focusBiz=bid}saveS();go('tree')}
+function openBizDetail(bid){state.bizDetail=bid;state.exp={};state.exp['CO-O']=true;saveS();go('biz')}
+function backToBizList(){state.bizDetail=null;saveS();go('biz')}
 
 // ============ REPORT ============
 function rRep(){return `<div class="ph"><div><h1>진행 리포트</h1><p>달성률 기록 — KR 수치화 비율 자동 계산</p></div></div>
@@ -431,10 +458,10 @@ ${Object.entries(BU).map(([id,b])=>`<div class="org-shape ${f===id?'on':''}" onc
 <div class="org-shape ${f==='etc'?'on':''}" onclick="filterUser('etc')"><div class="org-shape-c" style="background:#6366F1">전</div><div class="org-shape-n">전사</div><div class="org-shape-l">관리자·임원</div><span class="org-shape-cnt">${etcCnt}</span></div>
 </div>
 <div class="utbl"><div class="uth"><div></div><div>이름·이메일</div><div>사업부</div><div>역할</div><div>색상</div><div></div></div>
-${filtered.length?filtered.map(usr=>`<div class="urow" onclick="${can?`openUser('${usr.id}')`:''}"><div class="uavn" style="background:${usr.color}">${usr.name[0]}</div><div><div style="font-weight:500">${usr.name}<span class="src-tag ${usr.src||'dummy'}">${usr.src==='real'?'실제':'더미'}</span></div><div class="usub">${usr.email||usr.id}</div></div><div>${usr.bu?BU[usr.bu].name:'전사'}</div><div><span class="urtag">${RL[usr.role]}</span></div><div class="mono" style="font-size:10px;color:var(--tx4)">${usr.color}</div><div style="text-align:right;color:var(--tx5)">${can?'›':''}</div></div>`).join(''):'<div style="padding:32px;text-align:center;color:var(--tx4);font-size:13px">해당 사업부에 인원이 없습니다</div>'}
+${filtered.length?filtered.map(usr=>{const kct=Object.values(KRS).filter(k=>k.owner===usr.id).length;return `<div class="urow" onclick="${can?`openUser('${usr.id}')`:''}"><div class="uavn" style="background:${usr.color}">${usr.name[0]}</div><div><div style="font-weight:500">${usr.name}</div><div class="usub">${usr.email||usr.id}</div></div><div>${usr.bu?BU[usr.bu].name:'전사'}</div><div><span class="urtag">${RL[usr.role]||usr.role}</span></div><div class="mono" style="font-size:11px;color:var(--tx3)">${kct}개 KR</div><div style="text-align:right;color:var(--tx5)">${can?'›':''}</div></div>`}).join(''):'<div style="padding:32px;text-align:center;color:var(--tx4);font-size:13px">해당 사업부에 인원이 없습니다</div>'}
 </div>`}
 function filterUser(bu){state.userFilter=state.userFilter===bu?null:bu;go('user')}
-function newUser(){if(!canEditUser())return;state.editUid=null;$('#muT').textContent='사용자 추가';$('#muS').textContent='';$('#uN').value='';$('#uE').value='';$('#uR').value='member';$('#uBu').innerHTML='<option value="">전사</option>'+Object.entries(BU).map(([id,b])=>`<option value="${id}">${b.name}</option>`).join('');$('#uDel').style.display='none';$('#mUser').hidden=false}
+function newUser(){if(!canEditUser())return;state.editUid=null;$('#muT').textContent='사용자 추가';$('#muS').textContent='';$('#uN').value='';$('#uE').value='';$('#uR').value='staff';$('#uBu').innerHTML='<option value="">전사</option>'+Object.entries(BU).map(([id,b])=>`<option value="${id}">${b.name}</option>`).join('');$('#uDel').style.display='none';$('#mUser').hidden=false}
 function openUser(id){if(!canEditUser())return;const u=uById(id);if(!u)return;state.editUid=id;$('#muT').textContent='사용자 편집';$('#muS').textContent=u.name;$('#uN').value=u.name;$('#uE').value=u.email||'';$('#uR').value=u.role;$('#uBu').innerHTML='<option value="">전사</option>'+Object.entries(BU).map(([bid,b])=>`<option value="${bid}" ${bid===u.bu?'selected':''}>${b.name}</option>`).join('');$('#uDel').style.display=id!==state.cu?'inline-flex':'none';$('#mUser').hidden=false}
 function saveUser(){const n=$('#uN').value.trim();if(!n)return alert('이름 입력');const r=$('#uR').value,bu=$('#uBu').value||null,e=$('#uE').value;if(state.editUid){const u=uById(state.editUid);u.name=n;u.email=e;u.role=r;u.bu=bu}else{const ni='u'+(Math.max(...USERS.map(u=>+u.id.slice(1)))+1);const cs=['#3B82F6','#10B981','#F59E0B','#A855F7','#EC4899'];USERS.push({id:ni,name:n,email:e,role:r,bu,color:cs[USERS.length%cs.length]})}saveS();closeM('mUser');go('user')}
 function delUser(){if(!state.editUid)return;if(!confirm('삭제하시겠습니까?'))return;const idx=USERS.findIndex(u=>u.id===state.editUid);if(idx>=0){Object.values(KRS).forEach(k=>{if(k.owner===state.editUid)k.owner=null});USERS.splice(idx,1)}saveS();closeM('mUser');go('user')}
@@ -450,11 +477,9 @@ function rSet(){const u=uById(state.cu);const admin=u.role==='admin';const s=sta
 <div class="srow"><div><label>진척률 계산</label><div class="sub">현재값/목표값 비율</div></div><select id="setCalc" ${!admin?'disabled':''}><option value="auto" ${s.calcMode==='auto'?'selected':''}>자동</option><option value="manual" ${s.calcMode==='manual'?'selected':''}>수동 (담당자 직접 입력)</option></select></div>
 <div class="srow"><div><label>OKR 회의 주기</label></div><input type="text" id="setMeet" value="${s.meetCycle}" ${!admin?'disabled':''}></div>
 </div>
-<div class="sgrp"><h3>권한 모델</h3><div class="desc">개인 KR=본인 수정 / 사업 OKR=관리자·임원 / 전사=관리자만</div>
-<div class="srow"><div><label><b>관리자 (대표)</b></label><div class="sub">전사 전체 편집 · 사용자 관리 · 비밀번호 초기화 · 설정 변경</div></div></div>
-<div class="srow"><div><label><b>임원</b></label><div class="sub">사업 OKR 수정 · 사용자 조회 · 변경 이력 열람</div></div></div>
-<div class="srow"><div><label><b>리더 (사업 매니저)</b></label><div class="sub">자기 사업 KR 편집 (관리자 지정 시)</div></div></div>
-<div class="srow"><div><label><b>매니저 (실무자)</b></label><div class="sub">본인 KR만 수정 · 본인 비밀번호 변경</div></div></div>
+<div class="sgrp"><h3>권한 모델</h3><div class="desc">2단계 · 관리자 / 스탭</div>
+<div class="srow"><div><label><b>관리자</b></label><div class="sub">전사 전체 편집 · 사용자 관리 · 모든 KR 수정 · 그룹 KR 수정 · 설정 변경</div></div></div>
+<div class="srow"><div><label><b>스탭</b></label><div class="sub">본인이 리더(담당)로 지정된 KR만 수정 (텍스트/현재값/목표값/타입) · 본인 비밀번호 변경</div></div></div>
 </div>
 <div class="sgrp"><h3>내 계정</h3><div class="desc">${u.name} (${RL[u.role]})</div>
 <div class="srow"><div><label>비밀번호 변경</label><div class="sub">본인 계정 비밀번호 변경</div></div><button class="btn" onclick="openPwChange()">비밀번호 변경</button></div>
