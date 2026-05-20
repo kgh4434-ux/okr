@@ -281,33 +281,17 @@ lgt:{name:'로지스 (국내물류)',bu:'lg',obj:'3PL 신뢰도 있는 파트너
 erz:{name:'이레이즈 마케팅',bu:'er',obj:'\"AI 기반 자동화 및 서비스 자산화를 통한 수익 구조 혁신과 시장 지배력 강화\"',leadId:null},
 fod:{name:'보따리푸드 (국내 e커머스)',bu:'fd',obj:'상품군 확대 및 판매 채널 효율화',leadId:null}};
 const USERS=[
-{id:'u1',name:'곽경훈',email:'gawk@ex.com',role:'admin',bu:null,color:'#06B6D4',src:'real'},
-{id:'u2',name:'김도현',email:'kim@ex.com',role:'manager',bu:'be',color:'#2563EB',src:'dummy'},
-{id:'u3',name:'이수민',email:'lsm@ex.com',role:'member',bu:'be',color:'#3B82F6',src:'dummy'},
-{id:'u4',name:'정민영',email:'jmy@ex.com',role:'member',bu:'be',color:'#60A5FA',src:'dummy'},
-{id:'u5',name:'박지훈',email:'pjh@ex.com',role:'manager',bu:'lg',color:'#059669',src:'dummy'},
-{id:'u6',name:'한지영',email:'hjy@ex.com',role:'member',bu:'lg',color:'#10B981',src:'dummy'},
-{id:'u7',name:'윤하늘',email:'yhn@ex.com',role:'manager',bu:'er',color:'#DB2777',src:'dummy'},
-{id:'u8',name:'임승준',email:'lsj@ex.com',role:'member',bu:'er',color:'#EC4899',src:'dummy'},
-{id:'u9',name:'김다은',email:'kde@ex.com',role:'member',bu:'er',color:'#F472B6',src:'dummy'},
-{id:'u10',name:'정세영',email:'jsy@ex.com',role:'manager',bu:'fd',color:'#7C3AED',src:'dummy'},
-{id:'u11',name:'강도현',email:'kdh@ex.com',role:'member',bu:'fd',color:'#8B5CF6',src:'dummy'},
-{id:'u12',name:'김민지',email:'kmj@ex.com',role:'manager',bu:'co',color:'#D97706',src:'dummy'},
-{id:'u13',name:'홍성환',email:'hsh@ex.com',role:'member',bu:'co',color:'#F59E0B',src:'dummy'},
-{id:'u14',name:'서경호',email:'sgh@ex.com',role:'member',bu:'co',color:'#FBBF24',src:'dummy'},
-{id:'u15',name:'이유란',email:'lyr@ex.com',role:'manager',bu:'bz',color:'#0EA5E9',src:'real'},
-{id:'u16',name:'강여울',email:'kyu@ex.com',role:'member',bu:'bz',color:'#38BDF8',src:'real'},
-{id:'u17',name:'윤숙진',email:'ysj@ex.com',role:'member',bu:'bz',color:'#7DD3FC',src:'real'},
-{id:'u18',name:'대표이사',email:'ceo@ex.com',role:'admin',bu:null,color:'#6366F1',src:'dummy'},
-{id:'u19',name:'정우현 임원',email:'jwh@ex.com',role:'exec',bu:null,color:'#9333EA',src:'dummy'},
-{id:'u20',name:'한지석 임원',email:'hjs@ex.com',role:'exec',bu:null,color:'#A855F7',src:'dummy'}];
+{id:'u1',name:'곽경훈',email:'',role:'admin',bu:null,color:'#06B6D4',src:'real'},
+{id:'u2',name:'박병훈',email:'',role:'admin',bu:null,color:'#059669',src:'real'},
+{id:'u3',name:'이유란',email:'',role:'admin',bu:null,color:'#0EA5E9',src:'real'},
+{id:'u4',name:'이성일',email:'',role:'admin',bu:null,color:'#DB2777',src:'real'}];
 const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상화 및 성장 모드 전환',subObj:'각 사업부별 KR을 \'측정 가능한 실무 지표\'로 전환하여 목표 달성',progress:62,target:75,period:'2026.04.01 — 2026.06.30',daysLeft:50,krs:[
 {id:'CO-KR-1',biz:'exp'},{id:'CO-KR-2',biz:'lgt'},{id:'CO-KR-3',biz:'erz'},{id:'CO-KR-4',biz:'fod'}]};
 const KRS={
 'MKT-KR-1':{biz:'erz',text:'매체관리 수임료 150%',note:'',period:'',cur:0,tgt:150,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
 'MKT-KR-2':{biz:'erz',text:'마케팅 소스 자산화를 통한 수익상품의 매출대비 매출이익 85% 목표',note:'',period:'',cur:0,tgt:85,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-3',children:[]},
-'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[],flag:'pending'},
-'MKT-KR-4':{biz:'erz',text:'수익상품 모델로 영업 달성에 대한 수치 피드백 필요',note:'',period:'',cur:0,tgt:100,unit:'',type:'committed',owner:null,parent:'CO-KR-3',children:[],flag:'pending'},
+'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
+'MKT-KR-4':{biz:'erz',text:'수익상품 모델로 영업 달성에 대한 수치 피드백 필요',note:'',period:'',cur:0,tgt:100,unit:'',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
 'LGT-KR-1':{biz:'lgt',text:'신규 3PL 고객사 5개사 계약 체결 (월 출고량 1,000건 이상 기준)',note:'• 익스 KR5 : 스테이지랩스 (익스→국내) 공유\n• 푸드 KR3 : 자체물량 증대\n• 인바운드 영업자 : 박병훈 으로 지정',period:'',cur:0,tgt:5,unit:'사',type:'committed',owner:null,parent:'CO-KR-2',children:[],linkedTo:['EXP-KR-5','FOD-KR-3']},
 'LGT-KR-2':{biz:'lgt',text:'출고 정확도 99% 이상 유지 (오배송률 1% 이하)',note:'',period:'',cur:0,tgt:99,unit:'%',type:'committed',owner:null,parent:'CO-KR-2',children:[]},
 'LGT-KR-3':{biz:'lgt',text:'국내택배 매출 상향 (C2C 보따리택배 사이트 이용자 1,000명 목표)',note:'',period:'',cur:0,tgt:1000,unit:'명',type:'committed',owner:null,parent:'CO-KR-2',children:[]},
@@ -315,8 +299,8 @@ const KRS={
 'EXP-KR-1':{biz:'exp',text:'[통합 매출] 2026년 전체 매출(개인+기업) 전년 대비 115% 달성',note:'• 2025년 매출(약 56.8억) 기반, 2026년 총매출 약 65.4억 원 목표\n• 기업(B2B) 매출 로드맵 완수 (12월 월 매출 1.15억 도달 및 연간 10억 확보)\n• 전체 매출 내 비중 10% 점유',period:'진행 중 ~ 12월',cur:0,tgt:115,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
 'EXP-KR-2':{biz:'exp',text:'[가속화/품질] 전산 도입 후 결제 대기 리드타임 10% 단축 및 보상 50% 절감',note:'• 전산 자동 알림(결제 독려)을 통한 회전 속도 개선 및 오포장 방지로 재작업 리소스 차단\n• 연간 보상 건수 50건 이하 관리로 회전율 저해 요소 제거 및 프리미엄 신뢰도 구축',period:'6월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
 'EXP-KR-3':{biz:'exp',text:'[확장] 신규 전략 국가(6개국) 매출 비중 10% 확보',note:'• 유럽(영/독/프) 및 아시아(홍/대/싱)',period:'8월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
-'EXP-KR-4':{biz:'exp',text:'[인프라] 구매대행 리뉴얼 및 개인 서비스 전산화',note:'• 기존 구매대행 페이지 리뉴얼 및 홍보 진행 (코코 준비 1단계 진입)\n• 개인 고객 서비스 전산화 완료 시점에 맞춰 마케팅 재정비 및 전산 반영',period:'진행 중 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[],flag:'pending'},
-'EXP-KR-5':{biz:'exp',text:'[효율] 익스-로지스 현장팀 공동 운영 및 3PL 영업',note:'• 현장 인력 유기적 협업 및 프로세스 최적화를 통한 운영비 10% 절감 목표\n• 공동 운영 및 외부 3PL 화주사 3개 유치 목표',period:'6월 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[],flag:'pending',linkedTo:['LGT-KR-1']},
+'EXP-KR-4':{biz:'exp',text:'[인프라] 구매대행 리뉴얼 및 개인 서비스 전산화',note:'• 기존 구매대행 페이지 리뉴얼 및 홍보 진행 (코코 준비 1단계 진입)\n• 개인 고객 서비스 전산화 완료 시점에 맞춰 마케팅 재정비 및 전산 반영',period:'진행 중 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
+'EXP-KR-5':{biz:'exp',text:'[효율] 익스-로지스 현장팀 공동 운영 및 3PL 영업',note:'• 현장 인력 유기적 협업 및 프로세스 최적화를 통한 운영비 10% 절감 목표\n• 공동 운영 및 외부 3PL 화주사 3개 유치 목표',period:'6월 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[],linkedTo:['LGT-KR-1']},
 'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'• 오아시스, 토스 등 고효율 채널 입점 및 시장 안착',period:'진행 중 ~ 12월',cur:0,tgt:11,unit:'개',type:'committed',owner:null,parent:'CO-KR-4',children:[]},
 'FOD-KR-2':{biz:'fod',text:'[수익] 누계 수익률 개선 및 비용 효율화 (-120% → -40% 이내)',note:'• 연간 홍보 예산(2,700만 원)내에서 전략적 마케팅 시도 및 손실률 방어 집중\n• 2026년은 구축과 안정에 집중 (로지스 작업비 미반영), 2027년 흑자 전환 기반 마련',period:'진행 중 ~ 12월',cur:-120,tgt:-40,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-4',children:[]},
 'FOD-KR-3':{biz:'fod',text:'[연동] 로지스 현장 회전율 기여 (12월, 일 평균 주문 50건 달성)',note:'• 로지스의 초기 가동률을 지원하는 완충 역할 수행 및 출고 퀄리티 개선',period:'진행 중 ~ 12월',cur:0,tgt:50,unit:'건',type:'committed',owner:null,parent:'CO-KR-4',children:[],linkedTo:['LGT-KR-1']}};
