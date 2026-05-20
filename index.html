@@ -122,6 +122,11 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 .rep-r:last-child{border-bottom:none}
 .rep-bar{height:8px;background:var(--bgm);border-radius:99px;overflow:hidden}
 .rep-bf{height:100%;border-radius:99px}
+.rep-table-wrap{overflow-x:auto;margin-top:6px}
+.rep-table{width:100%;border-collapse:collapse}
+.rep-table th{text-align:left;padding:8px 10px;background:var(--bgs);font-weight:600;border-bottom:1px solid var(--bd);font-size:11px;color:var(--tx3);white-space:nowrap}
+.rep-table td{padding:8px 10px;border-bottom:1px solid var(--bgh);vertical-align:top}
+.rep-table tbody tr:hover{background:var(--bgh)}
 .pct-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-family:var(--fm);font-size:11px;font-weight:600;margin-left:6px}
 .pct-badge.over{background:#DBEAFE;color:#1E40AF}
 .pct-badge.ok{background:var(--sbg);color:var(--stx)}
@@ -259,6 +264,7 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <div class="brand">OKR</div>
 <nav class="tabs">
 <button class="tab" data-v="dash">대시보드</button>
+<button class="tab" data-v="myKr">내 KR</button>
 
 <button class="tab" data-v="biz">사업별</button>
 <button class="tab" data-v="rep">진행 리포트</button>
@@ -300,25 +306,25 @@ function renderOwners(k){const oids=getOwners(k);if(!oids.length)return '<span s
 const USERS=[
 {id:'u1',name:'곽경훈',email:'',role:'admin',bu:null,color:'#06B6D4',src:'real'},
 {id:'u2',name:'박병훈',email:'',role:'admin',bu:null,color:'#059669',src:'real'},
-{id:'u3',name:'이유란',email:'',role:'admin',bu:null,bus:['be','fd'],color:'#0EA5E9',src:'real'},
-{id:'u4',name:'이성일',email:'',role:'admin',bu:null,color:'#DB2777',src:'real'}];
+{id:'u3',name:'이유란',email:'',role:'admin',bu:null,bus:['er','fd'],color:'#0EA5E9',src:'real'},
+{id:'u4',name:'이성일',email:'',role:'admin',bu:null,bus:['er'],color:'#DB2777',src:'real'}];
 const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상화 및 성장 모드 전환',subObj:'각 사업부별 KR을 \'측정 가능한 실무 지표\'로 전환하여 목표 달성',progress:62,target:75,period:'2026.04.01 — 2026.06.30',daysLeft:50,krs:[
 {id:'CO-KR-1',biz:'exp'},{id:'CO-KR-2',biz:'lgt'},{id:'CO-KR-3',biz:'erz'},{id:'CO-KR-4',biz:'fod'}]};
 const KRS={
 'MKT-KR-1':{biz:'erz',text:'매체관리 수임료 150%',note:'',period:'',cur:0,tgt:150,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
-'MKT-KR-2':{biz:'erz',text:'마케팅 소스 자산화를 통한 수익상품의 매출대비 매출이익 85% 목표',note:'',period:'',cur:0,tgt:85,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-3',children:['MKT-IK-1']},
-'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:['MKT-IK-2']},
+'MKT-KR-2':{biz:'erz',text:'마케팅 소스 자산화를 통한 수익상품의 매출대비 매출이익 85% 목표',note:'',period:'',cur:0,tgt:85,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-3',children:['MKT-IK-1','MKT-IK-5']},
+'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:['MKT-IK-2','MKT-IK-4']},
 'MKT-KR-4':{biz:'erz',text:'수익상품 모델로 영업 달성에 대한 수치 피드백 필요',note:'',period:'',cur:0,tgt:100,unit:'',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
-'LGT-KR-1':{biz:'lgt',text:'신규 3PL 고객사 5개사 계약 체결 (월 출고량 1,000건 이상 기준)',note:'• 익스 KR5 : 스테이지랩스 (익스→국내) 공유\n• 푸드 KR3 : 자체물량 증대\n• 인바운드 영업자 : 박병훈 으로 지정',period:'',cur:0,tgt:5,unit:'사',type:'committed',owner:null,parent:'CO-KR-2',children:['LGT-IK-1'],linkedTo:['EXP-KR-5','FOD-KR-3']},
+'LGT-KR-1':{biz:'lgt',text:'신규 3PL 고객사 5개사 계약 체결 (월 출고량 1,000건 이상 기준)',note:'• 익스 KR5 : 스테이지랩스 (익스→국내) 공유\n• 푸드 KR3 : 자체물량 증대\n• 인바운드 영업자 : 박병훈 으로 지정',period:'',cur:0,tgt:5,unit:'사',type:'committed',owner:null,parent:'CO-KR-2',children:['LGT-IK-1','LGT-IK-3'],linkedTo:['EXP-KR-5','FOD-KR-3']},
 'LGT-KR-2':{biz:'lgt',text:'출고 정확도 99% 이상 유지 (오배송률 1% 이하)',note:'',period:'',cur:0,tgt:99,unit:'%',type:'committed',owner:null,parent:'CO-KR-2',children:['LGT-IK-2']},
 'LGT-KR-3':{biz:'lgt',text:'국내택배 매출 상향 (C2C 보따리택배 사이트 이용자 1,000명 목표)',note:'',period:'',cur:0,tgt:1000,unit:'명',type:'committed',owner:null,parent:'CO-KR-2',children:[]},
 'LGT-KR-4':{biz:'lgt',text:'근무자 이탈로 인한 안정화 최우선 (수치목표 불가)',note:'',period:'',cur:0,tgt:100,unit:'',type:'aspirational',owner:null,parent:'CO-KR-2',children:[],flag:'health'},
-'EXP-KR-1':{biz:'exp',text:'[통합 매출] 2026년 전체 매출(개인+기업) 전년 대비 115% 달성',note:'• 2025년 매출(약 56.8억) 기반, 2026년 총매출 약 65.4억 원 목표\n• 기업(B2B) 매출 로드맵 완수 (12월 월 매출 1.15억 도달 및 연간 10억 확보)\n• 전체 매출 내 비중 10% 점유',period:'진행 중 ~ 12월',cur:0,tgt:115,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:['EXP-IK-1']},
+'EXP-KR-1':{biz:'exp',text:'[통합 매출] 2026년 전체 매출(개인+기업) 전년 대비 115% 달성',note:'• 2025년 매출(약 56.8억) 기반, 2026년 총매출 약 65.4억 원 목표\n• 기업(B2B) 매출 로드맵 완수 (12월 월 매출 1.15억 도달 및 연간 10억 확보)\n• 전체 매출 내 비중 10% 점유',period:'진행 중 ~ 12월',cur:0,tgt:115,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:['EXP-IK-1','EXP-IK-3']},
 'EXP-KR-2':{biz:'exp',text:'[가속화/품질] 전산 도입 후 결제 대기 리드타임 10% 단축 및 보상 50% 절감',note:'• 전산 자동 알림(결제 독려)을 통한 회전 속도 개선 및 오포장 방지로 재작업 리소스 차단\n• 연간 보상 건수 50건 이하 관리로 회전율 저해 요소 제거 및 프리미엄 신뢰도 구축',period:'6월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
 'EXP-KR-3':{biz:'exp',text:'[확장] 신규 전략 국가(6개국) 매출 비중 10% 확보',note:'• 유럽(영/독/프) 및 아시아(홍/대/싱)',period:'8월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
 'EXP-KR-4':{biz:'exp',text:'[인프라] 구매대행 리뉴얼 및 개인 서비스 전산화',note:'• 기존 구매대행 페이지 리뉴얼 및 홍보 진행 (코코 준비 1단계 진입)\n• 개인 고객 서비스 전산화 완료 시점에 맞춰 마케팅 재정비 및 전산 반영',period:'진행 중 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
 'EXP-KR-5':{biz:'exp',text:'[효율] 익스-로지스 현장팀 공동 운영 및 3PL 영업',note:'• 현장 인력 유기적 협업 및 프로세스 최적화를 통한 운영비 10% 절감 목표\n• 공동 운영 및 외부 3PL 화주사 3개 유치 목표',period:'6월 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:['EXP-IK-2'],linkedTo:['LGT-KR-1']},
-'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'• 오아시스, 토스 등 고효율 채널 입점 및 시장 안착',period:'진행 중 ~ 12월',cur:0,tgt:11,unit:'개',type:'committed',owner:null,parent:'CO-KR-4',children:['FOD-IK-1']},
+'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'• 오아시스, 토스 등 고효율 채널 입점 및 시장 안착',period:'진행 중 ~ 12월',cur:0,tgt:11,unit:'개',type:'committed',owner:null,parent:'CO-KR-4',children:['FOD-IK-1','FOD-IK-2']},
 'FOD-KR-2':{biz:'fod',text:'[수익] 누계 수익률 개선 및 비용 효율화 (-120% → -40% 이내)',note:'• 연간 홍보 예산(2,700만 원)내에서 전략적 마케팅 시도 및 손실률 방어 집중\n• 2026년은 구축과 안정에 집중 (로지스 작업비 미반영), 2027년 흑자 전환 기반 마련',period:'진행 중 ~ 12월',cur:-120,tgt:-40,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-4',children:[]},
 'FOD-KR-3':{biz:'fod',text:'[연동] 로지스 현장 회전율 기여 (12월, 일 평균 주문 50건 달성)',note:'• 로지스의 초기 가동률을 지원하는 완충 역할 수행 및 출고 퀄리티 개선',period:'진행 중 ~ 12월',cur:0,tgt:50,unit:'건',type:'committed',owner:null,parent:'CO-KR-4',children:[],linkedTo:['LGT-KR-1']},
 'EXP-IK-1':{biz:'exp',text:'B2B 인바운드 영업 신규 2사 확보 (월 매출 2천만 원 이상)',note:'',period:'6월 ~ 12월',cur:0,tgt:2,unit:'사',type:'committed',owner:'u1',parent:'EXP-KR-1',children:[]},
@@ -327,8 +333,14 @@ const KRS={
 'LGT-IK-2':{biz:'lgt',text:'출고 정확도 모니터링 시스템 구축',note:'',period:'7월 ~ 9월',cur:0,tgt:100,unit:'%',type:'committed',owner:'u2',parent:'LGT-KR-2',children:[]},
 'MKT-IK-1':{biz:'erz',text:'수익상품 패키지 3종 설계 및 영업 자료화',note:'',period:'6월 ~ 8월',cur:0,tgt:3,unit:'종',type:'committed',owner:'u3',parent:'MKT-KR-2',children:[]},
 'MKT-IK-2':{biz:'erz',text:'마케팅 전체 — 업무 프로세스 가이드화 (KR 정의 워크숍 2회)',note:'그룹 KR',period:'5월 ~ 6월',cur:0,tgt:2,unit:'회',type:'committed',owner:'g_erz',parent:'MKT-KR-3',children:[]},
-'FOD-IK-1':{biz:'fod',text:'토스/오아시스 신규 입점 완료',note:'',period:'진행 중 ~ 9월',cur:0,tgt:2,unit:'채널',type:'committed',owner:'u4',parent:'FOD-KR-1',children:[]}};
-const STORE='okr-v5';
+'FOD-IK-1':{biz:'fod',text:'(이유란) 토스/오아시스 신규 입점 완료',note:'',period:'진행 중 ~ 9월',cur:0,tgt:2,unit:'채널',type:'committed',owners:['u3'],parent:'FOD-KR-1',children:[]},
+'EXP-IK-3':{biz:'exp',text:'(곽경훈) B2B 영업 인바운드 채널 셋업 — 랜딩페이지 + DM 자동화',note:'',period:'6월 ~ 9월',cur:0,tgt:100,unit:'%',type:'committed',owners:['u1'],parent:'EXP-KR-1',children:[]},
+'LGT-IK-3':{biz:'lgt',text:'(박병훈) 익스/푸드 공동 출고 시스템 안정화 — 일 평균 60건',note:'',period:'7월 ~ 12월',cur:0,tgt:60,unit:'건',type:'committed',owners:['u2'],parent:'LGT-KR-1',children:[]},
+'MKT-IK-3':{biz:'erz',text:'(이유란) 수익상품 영업 KIT 2종 제작 (제안서·케이스 모음)',note:'',period:'6월 ~ 7월',cur:0,tgt:2,unit:'종',type:'committed',owners:['u3'],parent:'MKT-KR-2',children:[]},
+'MKT-IK-4':{biz:'erz',text:'(이성일) 마케팅 자동화 워크플로우 도입 (n8n + GPT 3건)',note:'',period:'5월 ~ 8월',cur:0,tgt:3,unit:'건',type:'committed',owners:['u4'],parent:'MKT-KR-3',children:[]},
+'MKT-IK-5':{biz:'erz',text:'(이성일) 광고 소재 자동 생성 파이프라인 PoC',note:'',period:'7월 ~ 9월',cur:0,tgt:1,unit:'건',type:'committed',owners:['u4'],parent:'MKT-KR-2',children:[]},
+'FOD-IK-2':{biz:'fod',text:'(이유란) 푸드 신규 채널 ROAS 주간 모니터링 (12회)',note:'',period:'6월 ~ 12월',cur:0,tgt:12,unit:'회',type:'committed',owners:['u3'],parent:'FOD-KR-1',children:[]}};
+const STORE='okr-v6';
 let state={cu:null,selU:null,exp:{},sel:null,history:{}};
 function loadS(){try{const s=localStorage.getItem(STORE);if(!s)return;const d=JSON.parse(s);if(d._krs){const newKrs={};Object.entries(d._krs).forEach(([id,k])=>{newKrs[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in newKrs))delete KRS[k]});Object.entries(newKrs).forEach(([id,k])=>KRS[id]=k);delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>USERS.push(u));delete d._users}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)});delete d._biz}if(d._co){Object.assign(CO,d._co);delete d._co}state={...state,...d}}catch(e){}}
 function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS,_biz:BIZ,_co:CO}))}catch(e){}}
@@ -355,11 +367,11 @@ function coPct(){const ps=Object.keys(BIZ).map(b=>bizPct(b)).filter(p=>p>=0);if(
 function renderUL(f=''){const fs=f.toLowerCase().trim();if(!fs){$('#userList').innerHTML='<div class="lul-hint">검색창에 이름이나 사업부를 입력하세요<br>(예: "곽경훈", "익스", "관리자")</div>';return}const list=USERS.filter(u=>u.name.toLowerCase().includes(fs)||(getUserBus(u).some(b=>BU[b]?.name.toLowerCase().includes(fs)))||(RL[u.role]||'').toLowerCase().includes(fs));$('#userList').innerHTML=list.length?list.map(u=>`<div class="lu ${state.selU===u.id?'sel':''}" onclick="selU('${u.id}')"><div class="luav" style="background:${u.color}">${u.name[0]}</div><div><div class="lun">${u.name}</div><div class="lur">${(()=>{const bs=getUserBus(u);return bs.length?bs.map(b=>BU[b]?.name).filter(Boolean).join(', '):'전사'})()}</div></div><div class="lutag">${RL[u.role]}<span class="src-tag ${u.src||'dummy'}">${u.src==='real'?'실제':'더미'}</span></div></div>`).join(''):'<div class="lul-hint">검색 결과 없음</div>'}
 function selU(id){state.selU=id;renderUL()}
 function doLogin(){if(!state.selU){alert('사용자 선택');return}const pw=state.passwords&&state.passwords[state.selU]?state.passwords[state.selU]:'1234';if($('#pw').value!==pw){$('#loginErr').classList.add('on');return}state.cu=state.selU;saveS();showApp()}
-function showApp(){$('#login').style.display='none';$('#app').classList.add('on');const u=uById(state.cu);$('#topUav').textContent=u.name[0];$('#topUav').style.background=u.color;{const bs=getUserBus(u);if(bs.length){const myBiz=Object.entries(BIZ).find(([id,b])=>bs.includes(b.bu));if(myBiz){const ck=CO.krs.find(c=>c.biz===myBiz[0]);if(ck){state.exp['CO-O']=true;state.exp[ck.id]=true;state.focusBiz=myBiz[0]}}}}const init=location.hash.replace('#','')||(u.role==='admin'?'dash':'biz');go(init)}
+function showApp(){$('#login').style.display='none';$('#app').classList.add('on');const u=uById(state.cu);$('#topUav').textContent=u.name[0];$('#topUav').style.background=u.color;{const bs=getUserBus(u);if(bs.length){const myBiz=Object.entries(BIZ).find(([id,b])=>bs.includes(b.bu));if(myBiz){const ck=CO.krs.find(c=>c.biz===myBiz[0]);if(ck){state.exp['CO-O']=true;state.exp[ck.id]=true;state.focusBiz=myBiz[0]}}}}const init=location.hash.replace('#','')||(u.role==='admin'?'dash':'myKr');go(init)}
 function logout(){state.cu=null;state.selU=null;saveS();location.reload()}
 
 // ============ ROUTE ============
-function go(v){const tabs=['dash','tree','biz','rep','user','set'];if(!tabs.includes(v))v='dash';let h='';if(v==='dash')h=rDash();else if(v==='tree')h=rTree();else if(v==='biz')h=rBiz();else if(v==='rep')h=rRep();else if(v==='user')h=rUser();else if(v==='set')h=rSet();$('#root').innerHTML=`<div data-tab="${v}" class="on">${h}</div>`;$$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));if(location.hash.replace('#','')!==v)history.replaceState(null,'','#'+v);window.scrollTo({top:0})}
+function go(v){const tabs=['dash','myKr','biz','rep','user','set','tree'];if(!tabs.includes(v))v='dash';let h='';if(v==='dash')h=rDash();else if(v==='tree')h=rTree();else if(v==='biz')h=rBiz();else if(v==='rep')h=rRep();else if(v==='user')h=rUser();else if(v==='set')h=rSet();else if(v==='myKr')h=rMyKr();$('#root').innerHTML=`<div data-tab="${v}" class="on">${h}</div>`;$$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));if(location.hash.replace('#','')!==v)history.replaceState(null,'','#'+v);window.scrollTo({top:0})}
 
 // ============ DASHBOARD ============
 function rDash(){const cp=coPct();let total=0,ok=0,w=0,d=0;Object.entries(KRS).forEach(([id,k])=>{if(id.includes('-IK-'))return;total++;const p=pct(k);if(p>=70)ok++;else if(p>=40)w++;else d++});const users=USERS.length;return `
@@ -458,15 +470,33 @@ function openBizDetail(bid){state.bizDetail=bid;state.exp={};state.exp['CO-O']=t
 function backToBizList(){state.bizDetail=null;saveS();go('biz')}
 
 // ============ REPORT ============
-function rRep(){return `<div class="ph"><div><h1>진행 리포트</h1><p>달성률 기록 — KR 수치화 비율 자동 계산</p></div></div>
-<div class="rep"><h3>사업별 진척도</h3>
-${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);return `<div class="rep-r"><div style="display:flex;align-items:center;gap:8px"><span class="rd" style="background:${COLORS[id]}"></span><span>${b.name}</span></div><div class="rep-bar"><div class="rep-bf" style="width:${pctW(p)}%;background:${COLORS[id]}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(p)}">${pctTxt(p)} ${p>=0?`<span class="pct-badge ${pctCls(p)}">${pctBadge(p)}</span>`:''}</div></div>`}).join('')}
+function rRep(){
+const watch=Object.entries(KRS).filter(([id,k])=>{const p=pct(k);return p>=0&&p<70}).sort((a,b)=>pct(a[1])-pct(b[1]));
+const all=Object.entries(KRS).sort((a,b)=>{const ba=(a[1].biz||'zz'),bb=(b[1].biz||'zz');if(ba!==bb)return ba.localeCompare(bb);return a[0].localeCompare(b[0])});
+const renderRow=(id,k)=>{const p=pct(k);const biz=BIZ[k.biz];const owns=getOwners(k).map(o=>ownerInfo(o)?.name).filter(Boolean).join(', ')||'미배정';return `<tr onclick="openKr('${id}')" style="cursor:pointer"><td><div style="font-weight:500;font-size:12px">${k.text}</div><div style="font-size:10px;color:var(--tx5);margin-top:2px">${id}</div></td><td style="font-size:11px">${biz?biz.name:'-'}</td><td style="font-size:11px">${owns}</td><td class="mono" style="font-size:11px">${k.cur}${k.unit||''}</td><td class="mono" style="font-size:11px">${k.tgt}${k.unit||''}</td><td class="mono pct-color ${pctCls(p)}" style="font-size:11px">${pctTxt(p)}</td><td>${p>=0?`<span class="pct-badge ${pctCls(p)}">${pctBadge(p)}</span>`:'<span style="color:var(--tx5);font-size:10px">미등록</span>'}</td></tr>`};
+return `<div class="ph"><div><h1>진행 리포트</h1><p>위험 KR 집중 관리 + 전체 KR 한눈 보기</p></div></div>
+<div class="rep"><h3>⚠ 위험·주의 KR (${watch.length}건)</h3>
+${watch.length?`<div class="rep-table-wrap"><table class="rep-table"><thead><tr><th>KR</th><th>사업</th><th>담당자</th><th>현재</th><th>목표</th><th>진척</th><th>상태</th></tr></thead><tbody>${watch.map(([id,k])=>renderRow(id,k)).join('')}</tbody></table></div>`:'<div style="padding:24px;text-align:center;color:var(--tx5);font-size:12px">⭐ 위험/주의 KR 없음 (미등록 제외)</div>'}
 </div>
-<div class="rep"><h3>전사 KR 진척도 (= 사업 Objective)</h3>
-${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);return `<div class="rep-r"><div><div style="font-weight:500">${ck.id}</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">${b.obj}</div></div><div class="rep-bar"><div class="rep-bf" style="width:${pctW(bp)}%;background:${COLORS[ck.biz]}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(bp)}">${pctTxt(bp)} ${bp>=0?`<span class="pct-badge ${pctCls(bp)}">${pctBadge(bp)}</span>`:''}</div></div>`}).join('')}
+<div class="rep"><h3>전체 KR 관리 (${all.length}건)</h3>
+<div class="rep-table-wrap"><table class="rep-table"><thead><tr><th>KR</th><th>사업</th><th>담당자</th><th>현재</th><th>목표</th><th>진척</th><th>상태</th></tr></thead><tbody>${all.map(([id,k])=>renderRow(id,k)).join('')}</tbody></table></div>
 </div>`}
-
-// ============ USER ============
+function rMyKr(){const u=uById(state.cu);if(!u)return '<div class="ph"><div><h1>내 KR</h1></div></div>';
+const myBus=getUserBus(u);
+const myBizIds=Object.entries(BIZ).filter(([id,b])=>myBus.includes(b.bu)).map(([id,b])=>id);
+const myGroupIds=myBizIds.map(id=>'g_'+id);
+const personal=Object.entries(KRS).filter(([id,k])=>getOwners(k).includes(state.cu));
+const group=Object.entries(KRS).filter(([id,k])=>{const os=getOwners(k);return os.some(o=>myGroupIds.includes(o))&&!os.includes(state.cu)});
+const ps=personal.map(([id,k])=>pct(k)).filter(p=>p>=0);
+const avgP=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):-1;
+const renderMyRow=([id,k])=>{const p=pct(k);const biz=BIZ[k.biz];return `<div class="rep-r" onclick="openKr('${id}')" style="cursor:pointer"><div><div style="font-weight:500">${k.text}</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">${biz?biz.name:''} · ${id}${k.period?` · ${k.period}`:''}</div></div><div class="rep-bar"><div class="rep-bf" style="width:${pctW(p)}%;background:${k.biz?COLORS[k.biz]:'#999'}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(p)}">${pctTxt(p)} ${p>=0?`<span class="pct-badge ${pctCls(p)}">${pctBadge(p)}</span>`:''}</div></div>`};
+return `<div class="ph"><div><h1>내 KR</h1><p>${u.name} · 개인 ${personal.length}개 · 소속 그룹 ${group.length}개${avgP>=0?` · 평균 진척 ${avgP}%`:''}</p></div></div>
+<div class="rep"><h3>👤 내가 담당 (개인)</h3>
+${personal.length?personal.map(renderMyRow).join(''):'<div style="padding:24px;text-align:center;color:var(--tx5);font-size:12px">담당 KR이 없습니다 — 관리자에게 배정 요청하세요</div>'}
+</div>
+<div class="rep"><h3>👥 내가 속한 그룹 KR</h3>
+${group.length?group.map(renderMyRow).join(''):'<div style="padding:24px;text-align:center;color:var(--tx5);font-size:12px">소속 그룹 KR이 없습니다</div>'}
+</div>`}
 function rUser(){const u=uById(state.cu);const can=canEditUser();const f=state.userFilter;const filtered=f===null||f===undefined?USERS:f==='all'?USERS:f==='etc'?USERS.filter(u=>!getUserBus(u).length):USERS.filter(u=>getUserBus(u).includes(f));const buCnt=id=>USERS.filter(u=>getUserBus(u).includes(id)).length;const etcCnt=USERS.filter(u=>!getUserBus(u).length).length;return `<div class="ph"><div><h1>사용자 · 조직도</h1><p>${USERS.length}명 · ${can?'관리자/임원만 편집 가능':'조회만 가능'}</p></div>${can?'<div class="ph-r"><button class="btn btnp" onclick="newUser()">+ 사용자 추가</button></div>':''}</div>
 <div class="org-shapes">
 <div class="org-shape all ${!f||f==='all'?'on':''}" onclick="filterUser(null)"><div class="org-shape-c" style="background:rgba(255,255,255,.2)">전</div><div class="org-shape-n">전체</div><div class="org-shape-l">All users</div><span class="org-shape-cnt">${USERS.length}</span></div>
