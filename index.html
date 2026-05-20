@@ -135,6 +135,15 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 .chip:hover{border-color:var(--bdt);color:var(--tx)}
 .chip.on{background:var(--tx);color:#fff;border-color:var(--tx)}
 .rep-memo{font-size:11px;color:#1E40AF;background:#EFF6FF;padding:3px 8px;border-radius:5px;margin-top:4px;display:inline-block;border:1px solid #DBEAFE}
+.mykr-card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:14px 18px;margin-bottom:10px;cursor:pointer;transition:all .12s}
+.mykr-card:hover{border-color:var(--bdt);box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.mykr-card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:6px}
+.mykr-card-t{font-size:14px;font-weight:500;line-height:1.55;color:var(--tx);flex:1;word-break:keep-all}
+.mykr-card-r{text-align:right;white-space:nowrap;flex-shrink:0}
+.mykr-card-p{font-size:20px;font-weight:700;font-family:var(--fm)}
+.mykr-card-meta{font-size:11px;color:var(--tx4);margin-bottom:10px;line-height:1.5}
+.mykr-card-bar{height:6px;background:var(--bgm);border-radius:99px;overflow:hidden}
+.mykr-card-bar-f{height:100%;border-radius:99px;transition:width .3s}
 .pct-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-family:var(--fm);font-size:11px;font-weight:600;margin-left:6px}
 .pct-badge.over{background:#DBEAFE;color:#1E40AF}
 .pct-badge.ok{background:var(--sbg);color:var(--stx)}
@@ -524,7 +533,7 @@ const personal=Object.entries(KRS).filter(([id,k])=>getOwners(k).includes(state.
 const group=Object.entries(KRS).filter(([id,k])=>{const os=getOwners(k);return os.some(o=>myGroupIds.includes(o))&&!os.includes(state.cu)});
 const ps=personal.map(([id,k])=>pct(k)).filter(p=>p>=0);
 const avgP=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):-1;
-const renderMyRow=([id,k])=>{const p=pct(k);const biz=BIZ[k.biz];return `<div class="rep-r" onclick="openKr('${id}')" style="cursor:pointer"><div><div style="font-weight:500">${k.text}</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">${biz?biz.name:''} · ${id}${k.period?` · ${k.period}`:''}</div></div><div class="rep-bar"><div class="rep-bf" style="width:${pctW(p)}%;background:${k.biz?COLORS[k.biz]:'#999'}"></div></div><div style="text-align:right;font-weight:600" class="mono pct-color ${pctCls(p)}">${pctTxt(p)} ${p>=0?`<span class="pct-badge ${pctCls(p)}">${pctBadge(p)}</span>`:''}</div></div>`};
+const renderMyRow=([id,k])=>{const p=pct(k);const biz=BIZ[k.biz];const lastMemo=(state.history?.[id]||[]).slice(-1)[0]?.memo||'';return `<div class="mykr-card" onclick="openKr('${id}')"><div class="mykr-card-h"><div class="mykr-card-t">${k.text}</div><div class="mykr-card-r"><div class="mykr-card-p pct-color ${pctCls(p)}">${pctTxt(p)}</div>${p>=0?`<div style="margin-top:4px"><span class="pct-badge ${pctCls(p)}">${pctBadge(p)}</span></div>`:''}</div></div><div class="mykr-card-meta">${biz?biz.name:''} · ${id}${k.period?` · ${k.period}`:''}${lastMemo?` · 💬 ${lastMemo}`:''}</div><div class="mykr-card-bar"><div class="mykr-card-bar-f" style="width:${pctW(p)}%;background:${k.biz?COLORS[k.biz]:'#999'}"></div></div></div>`};
 return `<div class="ph"><div><h1>내 KR</h1><p>${u.name} · 개인 ${personal.length}개 · 소속 그룹 ${group.length}개${avgP>=0?` · 평균 진척 ${avgP}%`:''}</p></div></div>
 <div class="rep"><h3>👤 내가 담당 (개인)</h3>
 ${personal.length?personal.map(renderMyRow).join(''):'<div style="padding:24px;text-align:center;color:var(--tx5);font-size:12px">담당 KR이 없습니다 — 관리자에게 배정 요청하세요</div>'}
