@@ -326,10 +326,42 @@ function ownerInfo(oid){if(!oid)return null;if(String(oid).startsWith('g_')){con
 function getOwners(k){if(!k)return [];if(k.owners&&k.owners.length)return k.owners;if(k.owner)return [k.owner];return []}
 function renderOwners(k){const oids=getOwners(k);if(!oids.length)return '<span style="color:var(--tx5);font-size:11px">미배정</span>';const first=ownerInfo(oids[0]);if(!first)return '-';const more=oids.length-1;return `<span class="av" style="background:${first.color}">${first.initial}</span>${first.name}${first.type==='group'?'<span class="kr-flag link" style="margin-left:4px">그룹</span>':''}${more>0?`<span class="kr-flag" style="background:#F3F4F6;color:#52525B;margin-left:4px">외 ${more}</span>`:''}`}
 const USERS=[
-{id:'u1',name:'곽경훈',email:'',role:'admin',bu:null,color:'#06B6D4',src:'real'},
-{id:'u2',name:'박병훈',email:'',role:'admin',bu:null,color:'#059669',src:'real'},
-{id:'u3',name:'이유란',email:'',role:'admin',bu:null,bus:['er','fd'],color:'#0EA5E9',src:'real'},
-{id:'u4',name:'이성일',email:'',role:'admin',bu:null,bus:['er'],color:'#DB2777',src:'real'}];
+{id:'u1',name:'곽경훈',email:'',role:'admin',bu:null,bus:[],title:'선임매니저',color:'#06B6D4',src:'real'},
+{id:'u2',name:'박병훈',email:'',role:'admin',bu:null,bus:[],title:'대표이사',color:'#059669',src:'real'},
+{id:'u3',name:'이유란',email:'',role:'admin',bu:null,bus:['er','fd'],title:'상무',color:'#0EA5E9',src:'real'},
+{id:'u4',name:'이성일',email:'',role:'admin',bu:null,bus:['er'],title:'이사',color:'#DB2777',src:'real'},
+{id:'u5',name:'강여울',email:'',role:'staff',bu:null,bus:[],title:'선임매니저',color:'#3B82F6',src:'real'},
+{id:'u6',name:'윤숙진',email:'',role:'staff',bu:null,bus:[],title:'선임매니저',color:'#10B981',src:'real'},
+{id:'u7',name:'황혜정',email:'',role:'staff',bu:null,bus:[],title:'선임매니저',color:'#F59E0B',src:'real'},
+{id:'u8',name:'심현희',email:'',role:'staff',bu:null,bus:[],title:'매니저',color:'#A855F7',src:'real'},
+{id:'u9',name:'오승애',email:'',role:'staff',bu:null,bus:[],title:'매니저',color:'#EC4899',src:'real'},
+{id:'u10',name:'박근정',email:'',role:'staff',bu:null,bus:['er'],title:'부장',color:'#84CC16',src:'real'},
+{id:'u11',name:'이수인',email:'',role:'staff',bu:null,bus:['er'],title:'책임매니저',color:'#F97316',src:'real'},
+{id:'u12',name:'장지욱',email:'',role:'staff',bu:null,bus:['er'],title:'책임매니저',color:'#8B5CF6',src:'real'},
+{id:'u13',name:'한태영',email:'',role:'staff',bu:null,bus:['er'],title:'책임매니저',color:'#14B8A6',src:'real'},
+{id:'u14',name:'김경현',email:'',role:'staff',bu:null,bus:['er'],title:'선임매니저',color:'#3B82F6',src:'real'},
+{id:'u15',name:'서솔이',email:'',role:'staff',bu:null,bus:['er'],title:'매니저',color:'#10B981',src:'real'},
+{id:'u16',name:'윤혜나',email:'',role:'staff',bu:null,bus:['er'],title:'매니저',color:'#F59E0B',src:'real'},
+{id:'u17',name:'이지우',email:'',role:'staff',bu:null,bus:['er'],title:'매니저',color:'#A855F7',src:'real'},
+{id:'u18',name:'이한솔',email:'',role:'staff',bu:null,bus:['er'],title:'매니저',color:'#EC4899',src:'real'},
+{id:'u19',name:'남정현',email:'',role:'staff',bu:null,bus:['be'],title:'선임매니저',color:'#84CC16',src:'real'},
+{id:'u20',name:'임호준',email:'',role:'staff',bu:null,bus:['be'],title:'선임매니저',color:'#F97316',src:'real'},
+{id:'u21',name:'김동환',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#8B5CF6',src:'real'},
+{id:'u22',name:'김수현',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#14B8A6',src:'real'},
+{id:'u23',name:'노영래',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#3B82F6',src:'real'},
+{id:'u24',name:'문홍식',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#10B981',src:'real'},
+{id:'u25',name:'박재호',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#F59E0B',src:'real'},
+{id:'u26',name:'박진형',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#A855F7',src:'real'},
+{id:'u27',name:'손성진',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#EC4899',src:'real'},
+{id:'u28',name:'이규혁',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#84CC16',src:'real'},
+{id:'u29',name:'이범열',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#F97316',src:'real'},
+{id:'u30',name:'이인우',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#8B5CF6',src:'real'},
+{id:'u31',name:'홍승윤',email:'',role:'staff',bu:null,bus:['be'],title:'매니저',color:'#14B8A6',src:'real'},
+{id:'u32',name:'박종덕',email:'',role:'staff',bu:null,bus:['lg'],title:'책임매니저',color:'#3B82F6',src:'real'},
+{id:'u33',name:'김태형',email:'',role:'staff',bu:null,bus:['lg'],title:'선임매니저',color:'#10B981',src:'real'},
+{id:'u34',name:'손영진',email:'',role:'staff',bu:null,bus:['lg'],title:'매니저',color:'#F59E0B',src:'real'},
+{id:'u35',name:'이상호',email:'',role:'staff',bu:null,bus:['lg'],title:'매니저',color:'#A855F7',src:'real'},
+{id:'u36',name:'최영미',email:'',role:'staff',bu:null,bus:['lg'],title:'매니저',color:'#EC4899',src:'real'}];
 const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상화 및 성장 모드 전환',subObj:'각 사업부별 KR을 \'측정 가능한 실무 지표\'로 전환하여 목표 달성',progress:62,target:75,period:'2026.04.01 — 2026.06.30',daysLeft:50,krs:[
 {id:'CO-KR-1',biz:'exp'},{id:'CO-KR-2',biz:'lgt'},{id:'CO-KR-3',biz:'erz'},{id:'CO-KR-4',biz:'fod'}]};
 const KRS={
@@ -362,7 +394,7 @@ const KRS={
 'MKT-IK-4':{biz:'erz',text:'(이성일) 마케팅 자동화 워크플로우 도입 (n8n + GPT 3건)',note:'',period:'5월 ~ 8월',cur:0,tgt:3,unit:'건',type:'committed',owners:['u4'],parent:'MKT-KR-3',children:[]},
 'MKT-IK-5':{biz:'erz',text:'(이성일) 광고 소재 자동 생성 파이프라인 PoC',note:'',period:'7월 ~ 9월',cur:0,tgt:1,unit:'건',type:'committed',owners:['u4'],parent:'MKT-KR-2',children:[]},
 'FOD-IK-2':{biz:'fod',text:'(이유란) 푸드 신규 채널 ROAS 주간 모니터링 (12회)',note:'',period:'6월 ~ 12월',cur:0,tgt:12,unit:'회',type:'committed',owners:['u3'],parent:'FOD-KR-1',children:[]}};
-const STORE='okr-v7';
+const STORE='okr-v8';
 let state={cu:null,selU:null,exp:{},sel:null,history:{}};
 function loadS(){try{const s=localStorage.getItem(STORE);if(!s)return;const d=JSON.parse(s);if(d._krs){const newKrs={};Object.entries(d._krs).forEach(([id,k])=>{newKrs[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in newKrs))delete KRS[k]});Object.entries(newKrs).forEach(([id,k])=>KRS[id]=k);delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>USERS.push(u));delete d._users}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)});delete d._biz}if(d._co){Object.assign(CO,d._co);delete d._co}state={...state,...d}}catch(e){}}
 function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS,_biz:BIZ,_co:CO}))}catch(e){}}
