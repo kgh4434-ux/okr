@@ -365,36 +365,25 @@ const USERS=[
 const CO={obj:'2026년 사업별 수익성 기반의 전사 매출 구조 정상화 및 성장 모드 전환',subObj:'각 사업부별 KR을 \'측정 가능한 실무 지표\'로 전환하여 목표 달성',progress:62,target:75,period:'2026.04.01 — 2026.06.30',daysLeft:50,krs:[
 {id:'CO-KR-1',biz:'exp'},{id:'CO-KR-2',biz:'lgt'},{id:'CO-KR-3',biz:'erz'},{id:'CO-KR-4',biz:'fod'}]};
 const KRS={
-'MKT-KR-1':{biz:'erz',text:'매체관리 수임료 150%',note:'',period:'',cur:0,tgt:150,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
-'MKT-KR-2':{biz:'erz',text:'마케팅 소스 자산화를 통한 수익상품의 매출대비 매출이익 85% 목표',note:'',period:'',cur:0,tgt:85,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-3',children:['MKT-IK-1','MKT-IK-5']},
-'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owner:null,parent:'CO-KR-3',children:['MKT-IK-2','MKT-IK-4']},
-'MKT-KR-4':{biz:'erz',text:'수익상품 모델로 영업 달성에 대한 수치 피드백 필요',note:'',period:'',cur:0,tgt:100,unit:'',type:'committed',owner:null,parent:'CO-KR-3',children:[]},
-'LGT-KR-1':{biz:'lgt',text:'신규 3PL 고객사 5개사 계약 체결 (월 출고량 1,000건 이상 기준)',note:'• 익스 KR5 : 스테이지랩스 (익스→국내) 공유\n• 푸드 KR3 : 자체물량 증대\n• 인바운드 영업자 : 박병훈 으로 지정',period:'',cur:0,tgt:5,unit:'사',type:'committed',owner:null,parent:'CO-KR-2',children:['LGT-IK-1','LGT-IK-3'],linkedTo:['EXP-KR-5','FOD-KR-3']},
-'LGT-KR-2':{biz:'lgt',text:'출고 정확도 99% 이상 유지 (오배송률 1% 이하)',note:'',period:'',cur:0,tgt:99,unit:'%',type:'committed',owner:null,parent:'CO-KR-2',children:['LGT-IK-2']},
-'LGT-KR-3':{biz:'lgt',text:'국내택배 매출 상향 (C2C 보따리택배 사이트 이용자 1,000명 목표)',note:'',period:'',cur:0,tgt:1000,unit:'명',type:'committed',owner:null,parent:'CO-KR-2',children:[]},
-'LGT-KR-4':{biz:'lgt',text:'근무자 이탈로 인한 안정화 최우선 (수치목표 불가)',note:'',period:'',cur:0,tgt:100,unit:'',type:'aspirational',owner:null,parent:'CO-KR-2',children:[],flag:'health'},
-'EXP-KR-1':{biz:'exp',text:'[통합 매출] 2026년 전체 매출(개인+기업) 전년 대비 115% 달성',note:'• 2025년 매출(약 56.8억) 기반, 2026년 총매출 약 65.4억 원 목표\n• 기업(B2B) 매출 로드맵 완수 (12월 월 매출 1.15억 도달 및 연간 10억 확보)\n• 전체 매출 내 비중 10% 점유',period:'진행 중 ~ 12월',cur:0,tgt:115,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:['EXP-IK-1','EXP-IK-3']},
-'EXP-KR-2':{biz:'exp',text:'[가속화/품질] 전산 도입 후 결제 대기 리드타임 10% 단축 및 보상 50% 절감',note:'• 전산 자동 알림(결제 독려)을 통한 회전 속도 개선 및 오포장 방지로 재작업 리소스 차단\n• 연간 보상 건수 50건 이하 관리로 회전율 저해 요소 제거 및 프리미엄 신뢰도 구축',period:'6월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
-'EXP-KR-3':{biz:'exp',text:'[확장] 신규 전략 국가(6개국) 매출 비중 10% 확보',note:'• 유럽(영/독/프) 및 아시아(홍/대/싱)',period:'8월 ~ 12월',cur:0,tgt:10,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
-'EXP-KR-4':{biz:'exp',text:'[인프라] 구매대행 리뉴얼 및 결제 대기 리드타임 10% 단축',note:'• 기존 구매대행 페이지 리뉴얼 및 홍보 진행 (코코 준비 1단계 진입)\n• 개인 고객 서비스 전산화 완료 시점에 맞춰 마케팅 재정비 및 전산 반영',period:'진행 중 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:[]},
-'EXP-KR-5':{biz:'exp',text:'[효율] 익스-로지스 공동 운영 가동률 50% 및 3PL 화주사 3개 유치',note:'• 현장 인력 유기적 협업 및 프로세스 최적화를 통한 운영비 10% 절감 목표\n• 공동 운영 및 외부 3PL 화주사 3개 유치 목표',period:'6월 ~ 12월',cur:0,tgt:100,unit:'%',type:'committed',owner:null,parent:'CO-KR-1',children:['EXP-IK-2'],linkedTo:['LGT-KR-1']},
-'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'• 오아시스, 토스 등 고효율 채널 입점 및 시장 안착',period:'진행 중 ~ 12월',cur:0,tgt:11,unit:'개',type:'committed',owner:null,parent:'CO-KR-4',children:['FOD-IK-1','FOD-IK-2']},
-'FOD-KR-2':{biz:'fod',text:'[수익] 누계 수익률 개선 및 비용 효율화 (-120% → -40% 이내)',note:'• 연간 홍보 예산(2,700만 원)내에서 전략적 마케팅 시도 및 손실률 방어 집중\n• 2026년은 구축과 안정에 집중 (로지스 작업비 미반영), 2027년 흑자 전환 기반 마련',period:'진행 중 ~ 12월',cur:-120,tgt:-40,unit:'%',type:'aspirational',owner:null,parent:'CO-KR-4',children:[]},
-'FOD-KR-3':{biz:'fod',text:'[연동] 로지스 현장 회전율 기여 (12월, 일 평균 주문 50건 달성)',note:'• 로지스의 초기 가동률을 지원하는 완충 역할 수행 및 출고 퀄리티 개선',period:'진행 중 ~ 12월',cur:0,tgt:50,unit:'건',type:'committed',owner:null,parent:'CO-KR-4',children:[],linkedTo:['LGT-KR-1']},
-'EXP-IK-1':{biz:'exp',text:'B2B 인바운드 영업 신규 2사 확보 (월 매출 2천만 원 이상)',note:'',period:'6월 ~ 12월',cur:0,tgt:2,unit:'사',type:'committed',owner:'u1',parent:'EXP-KR-1',children:[]},
-'EXP-IK-2':{biz:'exp',text:'스테이지랩스 익스→국내 공유 운영 안정화',note:'그룹 KR — 익스 전체 참여',period:'진행 중',cur:0,tgt:100,unit:'%',type:'committed',owner:'g_exp',parent:'EXP-KR-5',children:[]},
-'LGT-IK-1':{biz:'lgt',text:'인바운드 영업 전담 (3PL 화주 2사 컨택 진행)',note:'',period:'진행 중 ~ 12월',cur:0,tgt:2,unit:'사',type:'committed',owner:'u2',parent:'LGT-KR-1',children:[]},
-'LGT-IK-2':{biz:'lgt',text:'출고 정확도 모니터링 시스템 구축',note:'',period:'7월 ~ 9월',cur:0,tgt:100,unit:'%',type:'committed',owner:'u2',parent:'LGT-KR-2',children:[]},
-'MKT-IK-1':{biz:'erz',text:'수익상품 패키지 3종 설계 및 영업 자료화',note:'',period:'6월 ~ 8월',cur:0,tgt:3,unit:'종',type:'committed',owner:'u3',parent:'MKT-KR-2',children:[]},
-'MKT-IK-2':{biz:'erz',text:'마케팅 전체 — 업무 프로세스 가이드화 (KR 정의 워크숍 2회)',note:'그룹 KR',period:'5월 ~ 6월',cur:0,tgt:2,unit:'회',type:'committed',owner:'g_erz',parent:'MKT-KR-3',children:[]},
-'FOD-IK-1':{biz:'fod',text:'(이유란) 토스/오아시스 신규 입점 완료',note:'',period:'진행 중 ~ 9월',cur:0,tgt:2,unit:'채널',type:'committed',owners:['u3'],parent:'FOD-KR-1',children:[]},
-'EXP-IK-3':{biz:'exp',text:'(곽경훈) B2B 영업 인바운드 채널 셋업 — 랜딩페이지 + DM 자동화',note:'',period:'6월 ~ 9월',cur:0,tgt:100,unit:'%',type:'committed',owners:['u1'],parent:'EXP-KR-1',children:[]},
-'LGT-IK-3':{biz:'lgt',text:'(박병훈) 익스/푸드 공동 출고 시스템 안정화 — 일 평균 60건',note:'',period:'7월 ~ 12월',cur:0,tgt:60,unit:'건',type:'committed',owners:['u2'],parent:'LGT-KR-1',children:[]},
-'MKT-IK-3':{biz:'erz',text:'(이유란) 수익상품 영업 KIT 2종 제작 (제안서·케이스 모음)',note:'',period:'6월 ~ 7월',cur:0,tgt:2,unit:'종',type:'committed',owners:['u3'],parent:'MKT-KR-2',children:[]},
-'MKT-IK-4':{biz:'erz',text:'(이성일) 마케팅 자동화 워크플로우 도입 (n8n + GPT 3건)',note:'',period:'5월 ~ 8월',cur:0,tgt:3,unit:'건',type:'committed',owners:['u4'],parent:'MKT-KR-3',children:[]},
-'MKT-IK-5':{biz:'erz',text:'(이성일) 광고 소재 자동 생성 파이프라인 PoC',note:'',period:'7월 ~ 9월',cur:0,tgt:1,unit:'건',type:'committed',owners:['u4'],parent:'MKT-KR-2',children:[]},
-'FOD-IK-2':{biz:'fod',text:'(이유란) 푸드 신규 채널 ROAS 주간 모니터링 (12회)',note:'',period:'6월 ~ 12월',cur:0,tgt:12,unit:'회',type:'committed',owners:['u3'],parent:'FOD-KR-1',children:[]}};
-const STORE='okr-v8';
+'MKT-KR-1':{biz:'erz',text:'매체관리 수임료 150%',note:'',period:'',cur:0,tgt:150,unit:'%',type:'committed',owners:[],parent:'CO-KR-3',children:[]},
+'MKT-KR-2':{biz:'erz',text:'마케팅 소스 자산화를 통한 수익상품의 매출대비 매출이익 85% 목표',note:'',period:'',cur:0,tgt:85,unit:'%',type:'aspirational',owners:[],parent:'CO-KR-3',children:[]},
+'MKT-KR-3':{biz:'erz',text:'업무 효율화 40% 달성',note:'• 현재 업무 프로세스의 규격화, 가이드화 작업\n• 수치의 형태로 KR 수정이 필요',period:'',cur:0,tgt:40,unit:'%',type:'committed',owners:[],parent:'CO-KR-3',children:[]},
+'MKT-KR-4':{biz:'erz',text:'수익상품 모델로 영업 달성에 대한 수치 피드백 필요',note:'',period:'',cur:0,tgt:100,unit:'',type:'committed',owners:[],parent:'CO-KR-3',children:[]},
+'LGT-KR-1':{biz:'lgt',text:'신규 3PL 고객사 5개사 계약 체결 (월 출고량 1,000건 이상 기준)',note:'• 익스 KR5 : 스테이지랩스 (익스→국내) 공유\n• 푸드 KR3 : 자체물량 증대\n• 인바운드 영업자 : 박병훈 으로 지정',period:'',cur:0,tgt:5,unit:'사',type:'committed',owners:[],parent:'CO-KR-2',children:[],linkedTo:['EXP-KR-5','FOD-KR-3']},
+'LGT-KR-2':{biz:'lgt',text:'출고 정확도 99% 이상 유지 (오배송률 1% 이하)',note:'',period:'',cur:0,tgt:99,unit:'%',type:'committed',owners:[],parent:'CO-KR-2',children:[]},
+'LGT-KR-3':{biz:'lgt',text:'국내택배 매출 상향 (C2C 보따리택배 사이트 이용자 1,000명 목표)',note:'',period:'',cur:0,tgt:1000,unit:'명',type:'committed',owners:[],parent:'CO-KR-2',children:[]},
+'LGT-KR-4':{biz:'lgt',text:'근무자 이탈로 인한 안정화 최우선 (수치 목표 불가)',note:'',period:'',cur:0,tgt:100,unit:'',type:'aspirational',owners:[],parent:'CO-KR-2',children:[],flag:'health'},
+'EXP-KR-1':{biz:'exp',text:'[통합 매출] 2026년 전체 매출(개인+기업) 전년 대비 115% 달성',note:'',period:'',cur:0,tgt:115,unit:'%',type:'committed',owners:[],parent:'CO-KR-1',children:[]},
+'EXP-KR-2':{biz:'exp',text:'[가속화/품질] 전산 도입 후 결제 대기 리드타임 10% 단축 및 보상 50% 절감',note:'',period:'',cur:0,tgt:10,unit:'%',type:'committed',owners:[],parent:'CO-KR-1',children:[]},
+'EXP-KR-3':{biz:'exp',text:'[확장] 신규 전략 국가(6개국) 매출 비중 10% 확보',note:'',period:'',cur:0,tgt:10,unit:'%',type:'committed',owners:[],parent:'CO-KR-1',children:[]},
+'EXP-KR-4':{biz:'exp',text:'[인프라] 구매대행 리뉴얼 및 결제 대기 리드타임 10% 단축',note:'',period:'',cur:0,tgt:10,unit:'%',type:'committed',owners:[],parent:'CO-KR-1',children:[]},
+'EXP-KR-5':{biz:'exp',text:'[효율] 익스-로지스 공동 운영 가동률 50% 및 3PL 화주사 3개 유치',note:'',period:'',cur:0,tgt:50,unit:'%',type:'committed',owners:[],parent:'CO-KR-1',children:[],linkedTo:['LGT-KR-1']},
+'FOD-KR-1':{biz:'fod',text:'[채널] 판매 채널 11개 플랫폼 풀가동 및 신규 상품 8종 확보',note:'',period:'',cur:0,tgt:11,unit:'개',type:'committed',owners:[],parent:'CO-KR-4',children:[]},
+'FOD-KR-2':{biz:'fod',text:'[수익] 누계 수익률 개선 및 비용 효율화 (-120% → -40% 이내)',note:'',period:'',cur:-120,tgt:-40,unit:'%',type:'aspirational',owners:[],parent:'CO-KR-4',children:[]},
+'FOD-KR-3':{biz:'fod',text:'[연동] 로지스 현장 회전율 기여 (12월, 일 평균 주문 50건 달성)',note:'',period:'',cur:0,tgt:50,unit:'건',type:'committed',owners:[],parent:'CO-KR-4',children:[],linkedTo:['LGT-KR-1']}
+};
+
+const STORE='okr-v9';
 let state={cu:null,selU:null,exp:{},sel:null,history:{}};
 function loadS(){try{const s=localStorage.getItem(STORE);if(!s)return;const d=JSON.parse(s);if(d._krs){const newKrs={};Object.entries(d._krs).forEach(([id,k])=>{newKrs[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in newKrs))delete KRS[k]});Object.entries(newKrs).forEach(([id,k])=>KRS[id]=k);delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>USERS.push(u));delete d._users}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)});delete d._biz}if(d._co){Object.assign(CO,d._co);delete d._co}state={...state,...d}}catch(e){}}
 function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS,_biz:BIZ,_co:CO}))}catch(e){}}
