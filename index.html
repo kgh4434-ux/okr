@@ -45,6 +45,7 @@ input,select,textarea{font-family:inherit}
 .brand{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-right:14px}
 .tabs{display:flex;gap:2px;flex:1;height:100%}
 .tab{padding:0 14px;display:inline-flex;align-items:center;font-size:13px;color:var(--tx4);cursor:pointer;border-bottom:2px solid transparent;height:100%;font-weight:500;letter-spacing:-.01em}
+.tab[hidden]{display:none!important}
 .tab:hover{color:var(--tx2)}
 .tab.on{color:var(--tx);border-bottom-color:var(--tx);font-weight:600}
 .tbr{display:flex;align-items:center;gap:12px;font-family:var(--fm);font-size:11px;color:var(--tx4)}
@@ -293,7 +294,7 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <button class="tab" data-v="user">사용자</button>
 <button class="tab" data-v="set">설정</button>
 </nav>
-<div class="tbr"><span class="mono">2026.05.12 KST</span><div class="uav" id="topUav" onclick="logout()" title="로그아웃"></div></div>
+<div class="tbr"><span class="mono" id="topDate"></span><div class="uav" id="topUav" onclick="logout()" title="로그아웃"></div></div>
 </header>
 <main id="root"></main>
 </div>
@@ -315,7 +316,7 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 </div><div class="mf"><button class="btn btn-d" id="uDel" onclick="delUser()" style="margin-right:auto">삭제</button><button class="btn" onclick="closeM('mUser')">취소</button><button class="btn btnp" onclick="saveUser()">저장</button></div></div></div>
 <script>
 const RL={admin:'관리자',staff:'스탭'};
-const Q_START=new Date('2026-04-01'),TODAY=new Date('2026-05-12'),Q_END=new Date('2026-06-30');
+const Q_START=new Date('2026-04-01'),TODAY=new Date(),Q_END=new Date('2026-06-30');
 const dLeft=Math.ceil((Q_END-TODAY)/86400000);
 const BU={be:{name:'보따리익스 사업부'},lg:{name:'로지스 사업부'},er:{name:'이레이즈 마케팅 사업부'},fd:{name:'보따리푸드 사업부'},co:{name:'코코박스 사업부 (회의 대기)',wait:true},bz:{name:'비즈니스 사업부 (회의 대기)',wait:true}};
 const COLORS={exp:'#2563EB',lgt:'#059669',erz:'#DB2777',fod:'#7C3AED',coc:'#D97706',biz:'#0EA5E9'};
@@ -413,7 +414,7 @@ function coPct(){const ps=Object.keys(BIZ).map(b=>bizPct(b)).filter(p=>p>=0);if(
 function renderUL(f=''){const fs=f.toLowerCase().trim();if(!fs){$('#userList').innerHTML='<div class="lul-hint">검색창에 이름이나 사업부를 입력하세요<br>(예: "곽경훈", "익스", "관리자")</div>';return}const list=USERS.filter(u=>u.name.toLowerCase().includes(fs)||(getUserBus(u).some(b=>BU[b]?.name.toLowerCase().includes(fs)))||(RL[u.role]||'').toLowerCase().includes(fs));$('#userList').innerHTML=list.length?list.map(u=>`<div class="lu ${state.selU===u.id?'sel':''}" onclick="selU('${u.id}')"><div class="luav" style="background:${u.color}">${u.name[0]}</div><div><div class="lun">${u.name}</div><div class="lur">${(()=>{const bs=getUserBus(u);return bs.length?bs.map(b=>BU[b]?.name).filter(Boolean).join(', '):'전사'})()}</div></div><div class="lutag">${RL[u.role]}<span class="src-tag ${u.src||'dummy'}">${u.src==='real'?'실제':'더미'}</span></div></div>`).join(''):'<div class="lul-hint">검색 결과 없음</div>'}
 function selU(id){state.selU=id;renderUL()}
 function doLogin(){if(!state.selU){alert('사용자 선택');return}const pw=state.passwords&&state.passwords[state.selU]?state.passwords[state.selU]:'1234';if($('#pw').value!==pw){$('#loginErr').classList.add('on');return}state.cu=state.selU;saveS();showApp()}
-function showApp(){$('#login').style.display='none';$('#app').classList.add('on');const u=uById(state.cu);$('#topUav').textContent=u.name[0];$('#topUav').style.background=u.color;{const bs=getUserBus(u);if(bs.length){const myBiz=Object.entries(BIZ).find(([id,b])=>bs.includes(b.bu));if(myBiz){const ck=CO.krs.find(c=>c.biz===myBiz[0]);if(ck){state.exp['CO-O']=true;state.exp[ck.id]=true;state.focusBiz=myBiz[0]}}}}const init=location.hash.replace('#','')||(u.role==='admin'?'dash':'myKr');go(init)}
+function showApp(){$('#login').style.display='none';$('#app').classList.add('on');const u=uById(state.cu);const _d=new Date();$('#topDate').textContent=`${_d.getFullYear()}.${String(_d.getMonth()+1).padStart(2,'0')}.${String(_d.getDate()).padStart(2,'0')} KST`;$('#topUav').textContent=u.name[0];$('#topUav').style.background=u.color;{const bs=getUserBus(u);if(bs.length){const myBiz=Object.entries(BIZ).find(([id,b])=>bs.includes(b.bu));if(myBiz){const ck=CO.krs.find(c=>c.biz===myBiz[0]);if(ck){state.exp['CO-O']=true;state.exp[ck.id]=true;state.focusBiz=myBiz[0]}}}}const init=location.hash.replace('#','')||(u.role==='admin'?'dash':'myKr');go(init)}
 function logout(){state.cu=null;state.selU=null;saveS();location.reload()}
 
 // ============ ROUTE ============
