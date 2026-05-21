@@ -297,6 +297,9 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <div class="modal" id="mKr" hidden><div class="mc"><div class="mh"><div><h3 id="mkT"></h3><div class="sub" id="mkS"></div></div><div class="mcl" onclick="closeM('mKr')">×</div></div>
 <div class="mb" id="mkB"></div>
 <div class="mf"><span class="lf" id="mkLf"></span><button class="btn btn-d" id="mkDel" onclick="delKr()" style="display:none">삭제</button><button class="btn" onclick="closeM('mKr')">닫기</button><button class="btn btnp" id="mkSave" onclick="saveKr()">저장</button></div></div></div>
+<div class="modal" id="mPickParent" hidden><div class="mc" style="max-width:480px"><div class="mh"><div><h3>상위 사업 KR 선택</h3><div class="sub" id="mPickSub"></div></div><div class="mcl" onclick="closeM('mPickParent')">×</div></div>
+<div class="mb"><div class="fg"><label>이 하위 KR이 어느 사업 KR 아래에 들어갈지 선택</label><select id="pickParentSel" style="width:100%;height:38px;padding:0 10px;border:1px solid var(--bd);border-radius:7px;font-size:13px"></select></div></div>
+<div class="mf"><button class="btn" onclick="closeM('mPickParent')">취소</button><button class="btn btnp" onclick="confirmPickParent()">확인</button></div></div></div>
 <div class="modal" id="mObj" hidden><div class="mc" style="max-width:520px"><div class="mh"><div><h3 id="mObjT">OBJECTIVE 수정</h3></div><div class="mcl" onclick="closeM('mObj')">×</div></div>
 <div class="mb"><div class="fg"><label>OBJECTIVE 텍스트</label><input type="text" id="objText" placeholder="목표 한 문장"></div></div>
 <div class="mf"><button class="btn" onclick="closeM('mObj')">취소</button><button class="btn btnp" onclick="saveObj()">저장</button></div></div></div>
@@ -433,7 +436,7 @@ ${CO.krs.map(ck=>{const b=BIZ[ck.biz];const bp=bizPct(ck.biz);const kex=state.ex
 ${Object.entries(KRS).filter(([id,k])=>k.parent===ck.id).map(([id,k])=>{const p=pct(k);const ow=ownerInfo(k.owner);const iks=k.children||[];const ikex=state.exp[id];return `
 <div class="node">
 <div class="row ${state.sel===id?'sel':''}" onclick="selRow('${id}');openKr('${id}')">
-<div class="expand ${(iks.length||isAdmin)?(ikex?'open':''):'leaf'}" onclick="event.stopPropagation();togE('${id}')">▶</div>
+<div class="expand ${iks.length?(ikex?'open':''):'leaf'}" onclick="event.stopPropagation();togE('${id}')">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.5"></div>
 <div class="rt"><span>${k.text}</span><span class="rid">${id}</span><span class="bd ${k.type==='committed'?'com':'asp'}">${k.type==='committed'?'필수':'도전'}</span>${k.flag==='pending'?'<span class="kr-flag pending">📝 피드백 필요</span>':''}${k.flag==='health'?'<span class="kr-flag health">🛡 정성 지표</span>':''}${k.linkedTo&&k.linkedTo.length?`<span class="kr-flag link">🔗 ${k.linkedTo.length}개 연결</span>`:''}</div>
 <div class="rown">${renderOwners(k)}</div>
@@ -460,22 +463,22 @@ function expAll(o){if(o){state.exp['CO-O']=true;CO.krs.forEach(ck=>{state.exp[ck
 function selRow(id){state.sel=id;saveS()}
 
 // ============ BIZ ============
-function rBizDetail(bid){const b=BIZ[bid];const bkrs=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&!id.includes('-IK-')&&!id.includes('-GK-'));const bp=bizPct(bid);const isAdmin=uById(state.cu)?.role==='admin';return `<div class="ph"><div><div style="display:flex;align-items:center;gap:10px"><span onclick="backToBizList()" style="cursor:pointer;color:var(--tx3);font-size:13px">← 사업 목록</span><h1 style="margin:0">${b.name}</h1></div><p style="margin-top:6px"><span class="rd" style="background:${COLORS[bid]};display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:6px"></span>${b.obj}${isAdmin?`<span onclick="editBizObj('${bid}')" style="cursor:pointer;color:var(--ac);font-size:12px;margin-left:8px">✎ 수정</span>`:''}</p></div><div class="ph-r" style="display:flex;align-items:center;gap:10px">${isAdmin?`<button class="btn btnp" onclick="newKr('${bid}')">+ KR 추가</button>`:''}<span class="mono pct-color ${pctCls(bp)}" style="font-size:22px;font-weight:700">${pctTxt(bp)}</span>${bp>=0?`<span class="pct-badge ${pctCls(bp)}">${pctBadge(bp)}</span>`:''}</div></div>
+function rBizDetail(bid){const b=BIZ[bid];const bkrs=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&!id.includes('-IK-')&&!id.includes('-GK-'));const bp=bizPct(bid);const isAdmin=uById(state.cu)?.role==='admin';return `<div class="ph"><div><div style="display:flex;align-items:center;gap:10px"><span onclick="backToBizList()" style="cursor:pointer;color:var(--tx3);font-size:13px">← 사업 목록</span><h1 style="margin:0">${b.name}</h1></div><p style="margin-top:6px"><span class="rd" style="background:${COLORS[bid]};display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:6px"></span>${b.obj}${isAdmin?`<span onclick="editBizObj('${bid}')" style="cursor:pointer;color:var(--ac);font-size:12px;margin-left:8px">✎ 수정</span>`:''}</p></div><div class="ph-r" style="display:flex;align-items:center;gap:10px">${isAdmin?`<button class="btn" onclick="openPickParent('${bid}')">+ 하위 KR</button><button class="btn btnp" onclick="newKr('${bid}')">+ 사업 KR</button>`:''}<span class="mono pct-color ${pctCls(bp)}" style="font-size:22px;font-weight:700">${pctTxt(bp)}</span>${bp>=0?`<span class="pct-badge ${pctCls(bp)}">${pctBadge(bp)}</span>`:''}</div></div>
 <div class="tree">${bkrs.map(([id,k])=>{const p=pct(k);const ow=ownerInfo(k.owner);const iks=k.children||[];const ikex=state.exp[id]!==false;return `<div class="node">
 <div class="row root ${state.sel===id?'sel':''}" onclick="selRow('${id}');openKr('${id}')">
-<div class="expand ${(iks.length||isAdmin)?(ikex?'open':''):'leaf'}" onclick="event.stopPropagation();togE('${id}')">▶</div>
+<div class="expand ${iks.length?(ikex?'open':''):'leaf'}" onclick="event.stopPropagation();togE('${id}')">▶</div>
 <div class="rd" style="background:${COLORS[bid]}"></div>
 <div class="rt"><b>${k.text}</b><span class="rid">${id}</span><span class="bd ${k.type==='committed'?'com':'asp'}">${k.type==='committed'?'필수':'도전'}</span></div>
 <div class="rown">${renderOwners(k)}</div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(p)}%;background:${COLORS[bid]}"></div></div><span class="rpct pct-color ${pctCls(p)}">${pctTxt(p)}</span></div>
 </div>
-${(iks.length||isAdmin)?`<div class="children" ${!ikex?'hidden':''}>${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=ownerInfo(ik.owner);return `<div class="row" onclick="openKr('${ikid}')">
+${iks.length?`<div class="children" ${!ikex?'hidden':''}>${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=ownerInfo(ik.owner);return `<div class="row" onclick="openKr('${ikid}')">
 <div class="expand leaf">▶</div>
 <div class="rd" style="background:${COLORS[bid]};opacity:.5"></div>
 <div class="rt"><span>${ik.text}</span><span class="rid">${ikid}</span><span class="rtag">하위 KR</span></div>
 <div class="rown">${renderOwners(ik)}</div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(ip)}%;background:${COLORS[bid]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${pctTxt(ip)}</span></div>
-</div>`}).join('')}${isAdmin?`<div class="add-ik-row" onclick="event.stopPropagation();newIK('${id}')">+ 하위 KR 추가 (개인/그룹)</div>`:''}</div>`:''}
+</div>`}).join('')}</div>`:''}
 </div>`}).join('')}</div>`}
 function rBiz(){if(state.bizDetail&&BIZ[state.bizDetail])return rBizDetail(state.bizDetail);return `<div class="ph"><div><h1>사업별 OKR</h1><p>각 사업의 목표와 진행 현황 · 클릭 시 미니 조직도</p></div></div>
 <div class="bgrid">${Object.entries(BIZ).map(([id,b])=>{const p=bizPct(id);const krs=Object.entries(KRS).filter(([kid,k])=>k.biz===id&&!kid.includes('-IK-'));return `<div class="bcard" onclick="openBizDetail('${id}')">
@@ -604,6 +607,8 @@ function newIK(parentId){const u=uById(state.cu);if(!u||u.role!=='admin'){alert(
 function delKr(){const id=state.currentKr;if(!id||!KRS[id])return;const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만 삭제 가능');return}if(!confirm(`정말 ${id} 를 삭제하시겠습니까? (자식 KR도 함께 삭제됩니다)`))return;const kids=KRS[id].children||[];kids.forEach(kid=>delete KRS[kid]);Object.values(KRS).forEach(k=>{if(k.children)k.children=k.children.filter(c=>c!==id)});delete KRS[id];saveS();closeM('mKr');go('biz')}
 function editBizObj(bid){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만');return}state.editObjType='biz';state.editObjBid=bid;$('#mObjT').textContent=`사업 OBJECTIVE — ${BIZ[bid].name}`;$('#objText').value=BIZ[bid].obj;$('#mObj').hidden=false;setTimeout(()=>$('#objText').focus(),50)}
 function editCoObj(){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만');return}state.editObjType='co';$('#mObjT').textContent='전사 OBJECTIVE';$('#objText').value=CO.obj;$('#mObj').hidden=false;setTimeout(()=>$('#objText').focus(),50)}
+function openPickParent(bid){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만');return}const bkrs=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&!id.includes('-IK-')&&!id.includes('-GK-'));if(!bkrs.length){alert('이 사업에 사업 KR이 없습니다. 먼저 사업 KR을 추가해주세요.');return}state.pickParentBid=bid;$('#mPickSub').textContent=BIZ[bid].name;$('#pickParentSel').innerHTML=bkrs.map(([id,k])=>`<option value="${id}">${id} — ${k.text||'(미입력)'}</option>`).join('');$('#mPickParent').hidden=false}
+function confirmPickParent(){const pid=$('#pickParentSel').value;if(!pid)return;closeM('mPickParent');newIK(pid)}
 function saveObj(){const v=$('#objText').value.trim();if(!v){alert('내용 입력');return}if(state.editObjType==='biz'){BIZ[state.editObjBid].obj=v}else if(state.editObjType==='co'){CO.obj=v}state.editObjType=null;state.editObjBid=null;saveS();closeM('mObj');go('biz')}
 function closeM(id){if(id==='mKr'&&state.isNewKr){const krId=state.currentKr;if(KRS[krId]&&!(KRS[krId].text||'').trim()){delete KRS[krId];Object.values(KRS).forEach(k=>{if(k.children)k.children=k.children.filter(c=>c!==krId)});saveS();go('biz')}state.isNewKr=false}$('#'+id).hidden=true}
 
