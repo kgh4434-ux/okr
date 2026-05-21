@@ -158,6 +158,9 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 .pct-badge.none{background:#F3F4F6;color:#6B7280}
 .pct-color.none{color:#6B7280}
 .kc-meter-f.none{background:#9CA3AF}
+.pct-badge.idle{background:#E0E7FF;color:#3730A3}
+.pct-color.idle{color:#3730A3}
+.kc-meter-f.idle{background:#818CF8}
 .trend{display:inline-flex;align-items:center;gap:2px;font-family:var(--fm);font-size:11px;color:var(--tx4);margin-left:4px}
 .trend.up{color:var(--stx)}
 .trend.down{color:var(--dtx)}
@@ -385,15 +388,15 @@ const KRS={
 
 const STORE='okr-v10';
 let state={cu:null,selU:null,exp:{},sel:null,history:{}};
-function loadS(){try{const s=localStorage.getItem(STORE);if(!s)return;const d=JSON.parse(s);if(d._krs){const newKrs={};Object.entries(d._krs).forEach(([id,k])=>{newKrs[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in newKrs))delete KRS[k]});Object.entries(newKrs).forEach(([id,k])=>KRS[id]=k);delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>USERS.push(u));delete d._users}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)});delete d._biz}if(d._co){Object.assign(CO,d._co);delete d._co}state={...state,...d}}catch(e){}}
+function loadS(){try{let s=localStorage.getItem(STORE);if(!s){for(let v=20;v>=1;v--){const o=localStorage.getItem('okr-v'+v);if(o){s=o;localStorage.setItem(STORE,s);localStorage.removeItem('okr-v'+v);break}}}if(!s)return;const d=JSON.parse(s);if(d._krs){const newKrs={};Object.entries(d._krs).forEach(([id,k])=>{newKrs[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in newKrs))delete KRS[k]});Object.entries(newKrs).forEach(([id,k])=>{const def=KRS[id]||{};KRS[id]={...def,...k}});delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>USERS.push(u));delete d._users}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)});delete d._biz}if(d._co){Object.assign(CO,d._co);delete d._co}state={...state,...d}}catch(e){}}
 function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS,_biz:BIZ,_co:CO}))}catch(e){}}
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const uById=id=>USERS.find(u=>u.id===id);
 const getUserBus=u=>u?.bus&&u.bus.length?u.bus:(u?.bu?[u.bu]:[]);
-const pctCls=p=>p<0?'none':p>=100?'over':p>=70?'ok':p>=40?'warn':'risk';
-const pctBadge=p=>{if(p<0)return '미등록';if(p>=100)return '↑ 초과';if(p>=70)return '정상';if(p>=40)return '주의';return '↓ 위험'};
-const pct=k=>{if(!k||(!k.tgt&&k.tgt!==0))return -1;const b=k.baseline??0;if(b===0&&k.cur===0)return -1;const range=k.tgt-b;if(range===0)return 100;const r=Math.round(((k.cur-b)/range)*100);return Math.min(100,Math.max(0,r))};
-const pctTxt=p=>p<0?'—':p+'%';
+const pctCls=p=>p===-1?'none':p===-2?'idle':p>=100?'over':p>=70?'ok':p>=40?'warn':'risk';
+const pctBadge=p=>{if(p===-1)return '미등록';if(p===-2)return '시작';if(p>=100)return '↑ 초과';if(p>=70)return '정상';if(p>=40)return '주의';return '↓ 위험'};
+const pct=k=>{if(!k||(!k.tgt&&k.tgt!==0))return -1;const b=k.baseline??0;if(b===0&&k.cur===0)return -1;if(k.cur===b&&b!==k.tgt)return -2;const range=k.tgt-b;if(range===0)return 100;const r=Math.round(((k.cur-b)/range)*100);return Math.min(100,Math.max(0,r))};
+const pctTxt=p=>p===-1?'—':p===-2?'0%':p+'%';
 const pctW=p=>Math.max(0,p);
 const status=p=>p>=95?'s':p>=70?'o':p>=40?'w':'d';
 // 권한
@@ -594,6 +597,10 @@ function rSet(){const u=uById(state.cu);const admin=u.role==='admin';const s=sta
 <div class="srow"><div><label>진척률 계산</label><div class="sub">현재값/목표값 비율</div></div><select id="setCalc" ${!admin?'disabled':''}><option value="auto" ${s.calcMode==='auto'?'selected':''}>자동</option><option value="manual" ${s.calcMode==='manual'?'selected':''}>수동 (담당자 직접 입력)</option></select></div>
 <div class="srow"><div><label>OKR 회의 주기</label></div><input type="text" id="setMeet" value="${s.meetCycle}" ${!admin?'disabled':''}></div>
 </div>
+<div class="sgrp"><h3>데이터 백업·복원</h3><div class="desc">JSON 파일로 수동 백업. 기기 이전·캐시 무효화 대비 권장.</div>
+<div class="srow"><div><label>전체 백업 다운로드</label><div class="sub">현재 KR·사용자·체크인 메모 모두 JSON 1개로</div></div><button class="btn" onclick="exportData()">백업 다운로드</button></div>
+<div class="srow"><div><label>백업 파일 복원</label><div class="sub">JSON 파일 선택 → 현재 데이터 덮어씀</div></div><input type="file" accept=".json" onchange="importData(this.files[0]);this.value=''" style="font-size:12px;padding:6px"></div>
+</div>
 <div class="sgrp"><h3>권한 모델</h3><div class="desc">2단계 · 관리자 / 스탭</div>
 <div class="srow"><div><label><b>관리자</b></label><div class="sub">전사 전체 편집 · 사용자 관리 · 모든 KR 수정 · 그룹 KR 수정 · 설정 변경</div></div></div>
 <div class="srow"><div><label><b>스탭</b></label><div class="sub">본인이 리더(담당)로 지정된 KR만 수정 (텍스트/현재값/목표값/타입) · 본인 비밀번호 변경</div></div></div>
@@ -631,6 +638,8 @@ function editCoObj(){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관
 function openPickParent(bid){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만');return}const bkrs=Object.entries(KRS).filter(([id,k])=>k.biz===bid&&!id.includes('-IK-')&&!id.includes('-GK-'));if(!bkrs.length){alert('이 사업에 사업 KR이 없습니다. 먼저 사업 KR을 추가해주세요.');return}state.pickParentBid=bid;$('#mPickSub').textContent=BIZ[bid].name;$('#pickParentSel').innerHTML=bkrs.map(([id,k])=>`<option value="${id}">${id} — ${k.text||'(미입력)'}</option>`).join('');$('#mPickParent').hidden=false}
 function confirmPickParent(){const pid=$('#pickParentSel').value;if(!pid)return;closeM('mPickParent');newIK(pid)}
 function saveObj(){const v=$('#objText').value.trim();if(!v){alert('내용 입력');return}if(state.editObjType==='biz'){BIZ[state.editObjBid].obj=v}else if(state.editObjType==='co'){CO.obj=v}state.editObjType=null;state.editObjBid=null;saveS();closeM('mObj');go('biz')}
+function exportData(){const data={state,KRS,USERS,BIZ,CO,exportedAt:new Date().toISOString(),version:STORE};const json=JSON.stringify(data,null,2);const blob=new Blob([json],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`okr-backup-${new Date().toISOString().slice(0,10).replace(/-/g,'')}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url)}
+function importData(file){if(!file)return;if(!confirm('현재 데이터를 백업 파일로 덮어씁니다. 계속할까요?'))return;const reader=new FileReader();reader.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.KRS){Object.keys(KRS).forEach(k=>delete KRS[k]);Object.assign(KRS,d.KRS)}if(d.USERS){USERS.length=0;d.USERS.forEach(u=>USERS.push(u))}if(d.BIZ)Object.assign(BIZ,d.BIZ);if(d.CO)Object.assign(CO,d.CO);if(d.state)Object.assign(state,d.state);saveS();alert('복원 완료 (백업 시점: '+(d.exportedAt||'알 수 없음')+').\n페이지를 새로 로드합니다.');location.reload()}catch(err){alert('복원 실패: '+err.message)}};reader.readAsText(file)}
 function closeM(id){if(id==='mKr'&&state.isNewKr){const krId=state.currentKr;if(KRS[krId]&&!(KRS[krId].text||'').trim()){delete KRS[krId];Object.values(KRS).forEach(k=>{if(k.children)k.children=k.children.filter(c=>c!==krId)});saveS();go('biz')}state.isNewKr=false}$('#'+id).hidden=true}
 
 loadS();
