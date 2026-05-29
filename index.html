@@ -314,6 +314,9 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <div class="fg"><label>역할</label><select id="uR"><option value="staff">스탭</option><option value="admin">관리자</option></select></div>
 <div class="fg"><label>사업부 (복수 선택)</label><div id="uBuList" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:6px 0"></div></div>
 </div><div class="mf"><button class="btn btn-d" id="uDel" onclick="delUser()" style="margin-right:auto">삭제</button><button class="btn" onclick="closeM('mUser')">취소</button><button class="btn btnp" onclick="saveUser()">저장</button></div></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const RL={admin:'관리자',staff:'스탭'};
 const Q_START=new Date('2026-04-01'),TODAY=new Date(),Q_END=new Date('2026-06-30');
@@ -389,8 +392,18 @@ const KRS={
 
 const STORE='okr-v10';
 let state={cu:null,selU:null,exp:{},sel:null,history:{}};
+/* Firebase 단일문서 동기화 (길1) */
+const firebaseConfig={apiKey:"AIzaSyDcWwGpaCwGDk2A6NI321eBFiY21JEjDo0",authDomain:"okr-dash-74b02.firebaseapp.com",projectId:"okr-dash-74b02",storageBucket:"okr-dash-74b02.firebasestorage.app",messagingSenderId:"501932953488",appId:"1:501932953488:web:25f992823d400c4d7eed15"};
+let DOC=null,_applyingCloud=false,_cloudReady=false,_pushT=null;
+function fbPayload(){return{_krs:KRS,_users:USERS,_biz:BIZ,_co:CO,_history:state.history||{},_settings:state.settings||{},_passwords:state.passwords||{},_savedAt:Date.now()};}
+function pushCloud(){if(!DOC||_applyingCloud)return;clearTimeout(_pushT);_pushT=setTimeout(()=>{DOC.set(fbPayload()).catch(e=>console.warn('cloud push',e));},600);}
+function applyCloud(d){if(!d)return;if(d._krs){const nk={};Object.entries(d._krs).forEach(([id,k])=>{nk[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in nk))delete KRS[k]});Object.entries(nk).forEach(([id,k])=>{const def=KRS[id]||{};KRS[id]={...def,...k}})}if(d._users){USERS.length=0;d._users.forEach(u=>{if(u.role!=='admin'&&u.role!=='staff')u.role='staff';USERS.push(u)})}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)})}if(d._co)Object.assign(CO,d._co);if(d._history)state.history=d._history;if(d._settings)state.settings={...(state.settings||{}),...d._settings};if(d._passwords)state.passwords=d._passwords;}
+function anyModalOpen(){return[...document.querySelectorAll('.modal')].some(m=>!m.hidden);}
+function cloudReRender(){try{renderUL()}catch(e){}if(state.cu){const v=location.hash.replace('#','')||'dash';try{go(v)}catch(e){}}}
+function startSync(){if(!DOC||DOC._subbed)return;DOC._subbed=true;DOC.onSnapshot(snap=>{if(snap.metadata&&snap.metadata.hasPendingWrites)return;if(!snap.exists){pushCloud();return;}if(anyModalOpen())return;_applyingCloud=true;applyCloud(snap.data());_applyingCloud=false;_cloudReady=true;cloudReRender();},err=>console.warn('cloud snapshot',err));}
+function initCloud(){try{if(!window.firebase||!firebase.initializeApp){console.warn('Firebase SDK 미로드 - 로컬 모드');return;}firebase.initializeApp(firebaseConfig);DOC=firebase.firestore().collection('okr').doc('data');firebase.auth().signInAnonymously().catch(e=>console.warn('anon auth',e));firebase.auth().onAuthStateChanged(u=>{if(u)startSync();});}catch(e){console.warn('firebase init',e);}}
 function loadS(){try{let s=localStorage.getItem(STORE);if(!s){for(let v=20;v>=1;v--){const o=localStorage.getItem('okr-v'+v);if(o){s=o;localStorage.setItem(STORE,s);localStorage.removeItem('okr-v'+v);break}}}if(!s)return;const d=JSON.parse(s);if(d._krs){const newKrs={};Object.entries(d._krs).forEach(([id,k])=>{newKrs[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in newKrs))delete KRS[k]});Object.entries(newKrs).forEach(([id,k])=>{const def=KRS[id]||{};KRS[id]={...def,...k}});delete d._krs}if(d._users){USERS.length=0;d._users.forEach(u=>{if(u.role!=='admin'&&u.role!=='staff')u.role='staff';USERS.push(u)});delete d._users}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)});delete d._biz}if(d._co){Object.assign(CO,d._co);delete d._co}state={...state,...d}}catch(e){}}
-function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS,_biz:BIZ,_co:CO}))}catch(e){}}
+function saveS(){try{localStorage.setItem(STORE,JSON.stringify({...state,_krs:KRS,_users:USERS,_biz:BIZ,_co:CO}))}catch(e){}pushCloud();}
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const uById=id=>USERS.find(u=>u.id===id);
 const getUserBus=u=>u?.bus&&u.bus.length?u.bus:(u?.bu?[u.bu]:[]);
@@ -652,4 +665,5 @@ if(state.cu)showApp();else state.exp['CO-O']=true;
 $$('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.v)));
 window.addEventListener('hashchange',()=>{if(state.cu){const v=location.hash.replace('#','')||'dash';go(v)}});
 Object.assign(window,{go,selU,doLogin,logout,togE,expAll,selRow,openKr,saveKr,closeM,openBizDetail,newUser,openUser,saveUser,delUser,filterUser,openPwChange,closePwChange,savePw,saveSettings});
+initCloud();
 </script></body></html>
