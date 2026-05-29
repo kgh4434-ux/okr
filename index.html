@@ -313,6 +313,7 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <div class="fg"><label>이메일</label><input type="text" id="uE"></div>
 <div class="fg"><label>역할</label><select id="uR"><option value="staff">스탭</option><option value="admin">관리자</option></select><div id="uRhint" style="display:none;font-size:11px;color:var(--tx3);margin-top:4px">본인 권한은 변경할 수 없습니다 (관리자 잠금 방지).</div></div>
 <div class="fg"><label>사업부 (복수 선택)</label><div id="uBuList" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:6px 0"></div></div>
+<div class="fg"><label>소속 팀 (지원팀 · 사업부와 별개)</label><div style="display:flex;gap:16px;padding:6px 0"><label style="font-size:12px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="uTeam_mgmt"> 경영지원팀</label><label style="font-size:12px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="uTeam_ops"> 운영지원팀</label></div></div>
 </div><div class="mf"><button class="btn btn-d" id="uDel" onclick="delUser()" style="margin-right:auto">삭제</button><button class="btn" onclick="closeM('mUser')">취소</button><button class="btn btnp" onclick="saveUser()">저장</button></div></div></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -328,7 +329,7 @@ exp:{name:'보따리익스 (해외물류)',bu:'be',obj:'매출 증대 및 물류
 lgt:{name:'로지스 (국내물류)',bu:'lg',obj:'3PL 신뢰도 있는 파트너로 자리잡고 운영 체계를 고도화',leadId:null},
 erz:{name:'이레이즈 마케팅',bu:'er',obj:'\"AI 기반 자동화 및 서비스 자산화를 통한 수익 구조 혁신과 시장 지배력 강화\"',leadId:null},
 fod:{name:'보따리푸드 (국내 e커머스)',bu:'fd',obj:'상품군 확대 및 판매 채널 효율화',leadId:null}};
-const GROUPS={g_exp:{name:'익스 전체',biz:'exp',color:'#2563EB'},g_lgt:{name:'로지스 전체',biz:'lgt',color:'#059669'},g_erz:{name:'마케팅 전체',biz:'erz',color:'#DB2777'},g_fod:{name:'푸드 전체',biz:'fod',color:'#7C3AED'}};
+const GROUPS={g_exp:{name:'익스 전체',biz:'exp',color:'#2563EB'},g_lgt:{name:'로지스 전체',biz:'lgt',color:'#059669'},g_erz:{name:'마케팅 전체',biz:'erz',color:'#DB2777'},g_fod:{name:'푸드 전체',biz:'fod',color:'#7C3AED'},g_mgmt:{name:'경영지원팀',biz:null,color:'#0EA5E9'},g_ops:{name:'운영지원팀',biz:null,color:'#F97316'}};
 function ownerInfo(oid){if(!oid)return null;if(String(oid).startsWith('g_')){const g=GROUPS[oid];return g?{type:'group',name:g.name,color:g.color,initial:'群'}:null}const u=uById(oid);return u?{type:'user',name:u.name,color:u.color,initial:u.name[0]}:null}
 function getOwners(k){if(!k)return [];if(k.owners&&k.owners.length)return k.owners;if(k.owner)return [k.owner];return []}
 function renderOwners(k){const oids=getOwners(k);if(!oids.length)return '<span style="color:var(--tx5);font-size:11px">미배정</span>';const first=ownerInfo(oids[0]);if(!first)return '-';const more=oids.length-1;return `<span class="av" style="background:${first.color}">${first.initial}</span>${first.name}${first.type==='group'?'<span class="kr-flag link" style="margin-left:4px">그룹</span>':''}${more>0?`<span class="kr-flag" style="background:#F3F4F6;color:#52525B;margin-left:4px">외 ${more}</span>`:''}`}
@@ -395,9 +396,9 @@ let state={cu:null,selU:null,exp:{},sel:null,history:{}};
 /* Firebase 단일문서 동기화 (길1) */
 const firebaseConfig={apiKey:"AIzaSyDcWwGpaCwGDk2A6NI321eBFiY21JEjDo0",authDomain:"okr-dash-74b02.firebaseapp.com",projectId:"okr-dash-74b02",storageBucket:"okr-dash-74b02.firebasestorage.app",messagingSenderId:"501932953488",appId:"1:501932953488:web:25f992823d400c4d7eed15"};
 let DOC=null,_applyingCloud=false,_cloudReady=false,_pushT=null;
-function fbPayload(){return{_krs:KRS,_users:USERS,_biz:BIZ,_co:CO,_history:state.history||{},_settings:state.settings||{},_passwords:state.passwords||{},_savedAt:Date.now()};}
+function fbPayload(){return{_krs:KRS,_users:USERS,_biz:BIZ,_co:CO,_history:state.history||{},_settings:state.settings||{},_passwords:state.passwords||{},_leaders:state.leaders||{},_savedAt:Date.now()};}
 function pushCloud(){if(!DOC||_applyingCloud)return;clearTimeout(_pushT);_pushT=setTimeout(()=>{DOC.set(fbPayload()).catch(e=>console.warn('cloud push',e));},600);}
-function applyCloud(d){if(!d)return;if(d._krs){const nk={};Object.entries(d._krs).forEach(([id,k])=>{nk[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in nk))delete KRS[k]});Object.entries(nk).forEach(([id,k])=>{const def=KRS[id]||{};KRS[id]={...def,...k}})}if(d._users){USERS.length=0;d._users.forEach(u=>{if(u.role!=='admin'&&u.role!=='staff')u.role='staff';USERS.push(u)})}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)})}if(d._co)Object.assign(CO,d._co);if(d._history)state.history=d._history;if(d._settings)state.settings={...(state.settings||{}),...d._settings};if(d._passwords)state.passwords=d._passwords;}
+function applyCloud(d){if(!d)return;if(d._krs){const nk={};Object.entries(d._krs).forEach(([id,k])=>{nk[id]=k});Object.keys(KRS).forEach(k=>{if(!(k in nk))delete KRS[k]});Object.entries(nk).forEach(([id,k])=>{const def=KRS[id]||{};KRS[id]={...def,...k}})}if(d._users){USERS.length=0;d._users.forEach(u=>{if(u.role!=='admin'&&u.role!=='staff')u.role='staff';USERS.push(u)})}if(d._biz){Object.entries(d._biz).forEach(([id,b])=>{if(BIZ[id])Object.assign(BIZ[id],b)})}if(d._co)Object.assign(CO,d._co);if(d._history)state.history=d._history;if(d._settings)state.settings={...(state.settings||{}),...d._settings};if(d._passwords)state.passwords=d._passwords;if(d._leaders)state.leaders=d._leaders;}
 function anyModalOpen(){return[...document.querySelectorAll('.modal')].some(m=>!m.hidden);}
 function cloudReRender(){try{renderUL()}catch(e){}if(state.cu){const v=location.hash.replace('#','')||'dash';try{go(v)}catch(e){}}}
 function startSync(){if(!DOC||DOC._subbed)return;DOC._subbed=true;DOC.onSnapshot(snap=>{if(snap.metadata&&snap.metadata.hasPendingWrites)return;if(!snap.exists){pushCloud();return;}if(anyModalOpen())return;_applyingCloud=true;applyCloud(snap.data());_applyingCloud=false;_cloudReady=true;cloudReRender();},err=>console.warn('cloud snapshot',err));}
@@ -414,7 +415,7 @@ const pctTxt=p=>p===-1?'—':p===-2?'0%':p+'%';
 const pctW=p=>Math.max(0,p);
 const status=p=>p>=95?'s':p>=70?'o':p>=40?'w':'d';
 // 권한
-function canEdit(krId){const u=uById(state.cu);if(!u)return false;const k=KRS[krId];if(!k)return false;if(u.role==='admin')return true;const ows=getOwners(k);return ows.some(o=>!String(o).startsWith('g_')&&o===state.cu)}
+function canEdit(krId){const u=uById(state.cu);if(!u)return false;const k=KRS[krId];if(!k)return false;if(u.role==='admin')return true;const ows=getOwners(k);const L=state.leaders||{};if(ows.some(o=>String(o).startsWith('g_')&&L[o]===state.cu))return true;return ows.some(o=>!String(o).startsWith('g_')&&o===state.cu)}
 function canEditUser(){const u=uById(state.cu);return u&&u.role==='admin'}
 // 자식 KR 집계 진척
 function avgChildren(krId){const k=KRS[krId];if(!k||!k.children||!k.children.length)return null;const cs=k.children.map(c=>pct(KRS[c]));return Math.round(cs.reduce((a,b)=>a+b,0)/cs.length)}
@@ -571,7 +572,7 @@ function updateRepBody(){if(!state.repFilter)state.repFilter={q:'',biz:'',status
 function rMyKr(){const u=uById(state.cu);if(!u)return '<div class="ph"><div><h1>내 KR</h1></div></div>';
 const myBus=getUserBus(u);
 const myBizIds=Object.entries(BIZ).filter(([id,b])=>myBus.includes(b.bu)).map(([id,b])=>id);
-const myGroupIds=myBizIds.map(id=>'g_'+id);
+const myGroupIds=[...myBizIds.map(id=>'g_'+id),...((u.teams)||[])];
 const personal=Object.entries(KRS).filter(([id,k])=>getOwners(k).includes(state.cu));
 const group=Object.entries(KRS).filter(([id,k])=>{const os=getOwners(k);return os.some(o=>myGroupIds.includes(o))&&!os.includes(state.cu)});
 const ps=personal.map(([id,k])=>pct(k)).filter(p=>p>=0);
@@ -595,12 +596,14 @@ ${filtered.length?filtered.map(usr=>{const kct=Object.values(KRS).filter(k=>k.ow
 </div>`}
 function filterUser(bu){state.userFilter=state.userFilter===bu?null:bu;go('user')}
 function renderBuList(selected){selected=selected||[];$('#uBuList').innerHTML=Object.entries(BU).map(([id,b])=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 8px;background:var(--bgs);border-radius:6px;cursor:pointer"><input type="checkbox" value="${id}" ${selected.includes(id)?'checked':''}>${b.name}</label>`).join('')}
-function newUser(){if(!canEditUser())return;state.editUid=null;$('#muT').textContent='사용자 추가';$('#muS').textContent='';$('#uN').value='';$('#uE').value='';$('#uR').value='staff';$('#uR').disabled=false;$('#uRhint').style.display='none';renderBuList([]);$('#uDel').style.display='none';$('#mUser').hidden=false}
-function openUser(id){if(!canEditUser())return;const u=uById(id);if(!u)return;state.editUid=id;$('#muT').textContent='사용자 편집';$('#muS').textContent=u.name;$('#uN').value=u.name;$('#uE').value=u.email||'';$('#uR').value=u.role;$('#uR').disabled=(id===state.cu);$('#uRhint').style.display=(id===state.cu)?'block':'none';renderBuList(getUserBus(u));$('#uDel').style.display=id!==state.cu?'inline-flex':'none';$('#mUser').hidden=false}
-function saveUser(){const n=$('#uN').value.trim();if(!n)return alert('이름 입력');const r=$('#uR').value,e=$('#uE').value;const bus=Array.from($('#uBuList').querySelectorAll('input:checked')).map(i=>i.value);const oldRole=state.editUid?uById(state.editUid)?.role:null;if(state.editUid){const u=uById(state.editUid);u.name=n;u.email=e;u.role=r;u.bus=bus;delete u.bu}else{const ni='u'+(Math.max(...USERS.map(u=>+u.id.slice(1)))+1);const cs=['#3B82F6','#10B981','#F59E0B','#A855F7','#EC4899'];USERS.push({id:ni,name:n,email:e,role:r,bus,color:cs[USERS.length%cs.length]})}saveS();closeM('mUser');if(state.editUid===state.cu&&oldRole&&oldRole!==r){alert('본인 권한이 변경되어 페이지를 다시 로드합니다.');location.reload();return}go('user')}
+function newUser(){if(!canEditUser())return;state.editUid=null;$('#muT').textContent='사용자 추가';$('#muS').textContent='';$('#uN').value='';$('#uE').value='';$('#uR').value='staff';$('#uR').disabled=false;$('#uRhint').style.display='none';renderBuList([]);if($('#uTeam_mgmt')){$('#uTeam_mgmt').checked=false;$('#uTeam_ops').checked=false;}$('#uDel').style.display='none';$('#mUser').hidden=false}
+function openUser(id){if(!canEditUser())return;const u=uById(id);if(!u)return;state.editUid=id;$('#muT').textContent='사용자 편집';$('#muS').textContent=u.name;$('#uN').value=u.name;$('#uE').value=u.email||'';$('#uR').value=u.role;$('#uR').disabled=(id===state.cu);$('#uRhint').style.display=(id===state.cu)?'block':'none';renderBuList(getUserBus(u));if($('#uTeam_mgmt')){$('#uTeam_mgmt').checked=(u.teams||[]).includes('g_mgmt');$('#uTeam_ops').checked=(u.teams||[]).includes('g_ops');}$('#uDel').style.display=id!==state.cu?'inline-flex':'none';$('#mUser').hidden=false}
+function saveUser(){const n=$('#uN').value.trim();if(!n)return alert('이름 입력');const r=$('#uR').value,e=$('#uE').value;const bus=Array.from($('#uBuList').querySelectorAll('input:checked')).map(i=>i.value);const teams=[];if($('#uTeam_mgmt')&&$('#uTeam_mgmt').checked)teams.push('g_mgmt');if($('#uTeam_ops')&&$('#uTeam_ops').checked)teams.push('g_ops');const oldRole=state.editUid?uById(state.editUid)?.role:null;if(state.editUid){const u=uById(state.editUid);u.name=n;u.email=e;u.role=r;u.bus=bus;u.teams=teams;delete u.bu}else{const ni='u'+(Math.max(...USERS.map(u=>+u.id.slice(1)))+1);const cs=['#3B82F6','#10B981','#F59E0B','#A855F7','#EC4899'];USERS.push({id:ni,name:n,email:e,role:r,bus,teams,color:cs[USERS.length%cs.length]})}saveS();closeM('mUser');if(state.editUid===state.cu&&oldRole&&oldRole!==r){alert('본인 권한이 변경되어 페이지를 다시 로드합니다.');location.reload();return}go('user')}
 function delUser(){if(!state.editUid)return;if(!confirm('삭제하시겠습니까?'))return;const idx=USERS.findIndex(u=>u.id===state.editUid);if(idx>=0){Object.values(KRS).forEach(k=>{if(k.owner===state.editUid)k.owner=null});USERS.splice(idx,1)}saveS();closeM('mUser');go('user')}
 
 // ============ SETTINGS ============
+function rLeaders(){const L=state.leaders||{};let rows='';for(const gid in GROUPS){const g=GROUPS[gid];let opts='<option value="">(리더 없음)</option>';USERS.forEach(us=>{opts+=`<option value="${us.id}"${L[gid]===us.id?' selected':''}>${us.name}</option>`;});rows+=`<div class="srow"><div><label>${g.name}</label></div><select onchange="setLeader('${gid}',this.value)">${opts}</select></div>`;}return `<div class="sgrp"><h3>그룹·팀 리더</h3><div class="desc">그룹/팀에 맡긴 KR은 여기 지정된 리더(+관리자)만 수정할 수 있습니다.</div>${rows}</div>`;}
+function setLeader(gid,uid){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만');return}if(!state.leaders)state.leaders={};if(uid)state.leaders[gid]=uid;else delete state.leaders[gid];saveS();}
 function rSet(){const u=uById(state.cu);const admin=u.role==='admin';const s=state.settings||(state.settings={qStart:'2026-04-01',qEnd:'2026-06-30',calcMode:'auto',meetCycle:'주기적 (별도 운영)'});return `<div class="ph"><div><h1>설정</h1><p>권한: ${RL[u.role]}${admin?' · 편집 가능':' · 조회만'}</p></div>${admin?'<div class="ph-r"><button class="btn btnp" onclick="saveSettings()">변경 저장</button></div>':''}</div>
 <div class="sgrp"><h3>분기 정보</h3><div class="desc">관리자만 편집 가능</div>
 <div class="srow"><div><label>분기 시작일</label></div><input type="date" id="setQStart" value="${s.qStart}" ${!admin?'disabled':''}></div>
@@ -615,9 +618,10 @@ function rSet(){const u=uById(state.cu);const admin=u.role==='admin';const s=sta
 <div class="srow"><div><label>전체 백업 다운로드</label><div class="sub">현재 KR·사용자·체크인 메모 모두 JSON 1개로</div></div><button class="btn" onclick="exportData()">백업 다운로드</button></div>
 <div class="srow"><div><label>백업 파일 복원</label><div class="sub">JSON 파일 선택 → 현재 데이터 덮어씀</div></div><input type="file" accept=".json" onchange="importData(this.files[0]);this.value=''" style="font-size:12px;padding:6px"></div>
 </div>
+${admin?rLeaders():''}
 <div class="sgrp"><h3>권한 모델</h3><div class="desc">2단계 · 관리자 / 스탭</div>
 <div class="srow"><div><label><b>관리자</b></label><div class="sub">전사 전체 편집 · 사용자 관리 · 모든 KR 수정 · 그룹 KR 수정 · 설정 변경</div></div></div>
-<div class="srow"><div><label><b>스탭</b></label><div class="sub">본인이 리더(담당)로 지정된 KR만 수정 (텍스트/현재값/목표값/타입) · 본인 비밀번호 변경</div></div></div>
+<div class="srow"><div><label><b>스탭</b></label><div class="sub">본인이 담당(개인)으로 지정된 KR + 본인이 리더인 그룹/팀 KR 수정 · 본인 비밀번호 변경</div></div></div>
 </div>
 <div class="sgrp"><h3>내 계정</h3><div class="desc">${u.name} (${RL[u.role]})</div>
 <div class="srow"><div><label>비밀번호 변경</label><div class="sub">본인 계정 비밀번호 변경</div></div><button class="btn" onclick="openPwChange()">비밀번호 변경</button></div>
