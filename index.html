@@ -321,7 +321,6 @@ main{padding:32px 36px;max-width:1400px;margin:0 auto}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const RL={admin:'관리자',staff:'스탭'};
-const TRANK={'매니저':1,'선임매니저':2,'책임매니저':3,'부장':4,'이사':5,'상무':6,'대표이사':7};
 const Q_START=new Date('2026-04-01'),TODAY=new Date(),Q_END=new Date('2026-06-30');
 const dLeft=Math.ceil((Q_END-TODAY)/86400000);
 const BU={be:{name:'보따리익스 사업부'},lg:{name:'로지스 사업부'},er:{name:'이레이즈 마케팅 사업부'},fd:{name:'보따리푸드 사업부'},co:{name:'코코박스 사업부 (회의 대기)',wait:true},bz:{name:'비즈니스 사업부 (회의 대기)',wait:true}};
@@ -419,7 +418,7 @@ const pctTxt=p=>p===-1?'—':p===-2?'0%':p+'%';
 const pctW=p=>Math.max(0,p);
 const status=p=>p>=95?'s':p>=70?'o':p>=40?'w':'d';
 // 권한
-function canEdit(krId){const u=uById(state.cu);if(!u)return false;const k=KRS[krId];if(!k)return false;if(u.role==='admin')return true;if(state.settings&&state.settings.viewerMode&&(TRANK[u.title]||0)<3)return false;const ows=getOwners(k);const L=state.leaders||{};if(ows.some(o=>String(o).startsWith('g_')&&L[o]===state.cu))return true;return ows.some(o=>!String(o).startsWith('g_')&&o===state.cu)}
+function canEdit(krId){const u=uById(state.cu);if(!u)return false;const k=KRS[krId];if(!k)return false;if(u.role==='admin')return true;if(state.settings&&state.settings.viewerMode)return false;const ows=getOwners(k);const L=state.leaders||{};if(ows.some(o=>String(o).startsWith('g_')&&L[o]===state.cu))return true;return ows.some(o=>!String(o).startsWith('g_')&&o===state.cu)}
 function canEditUser(){const u=uById(state.cu);return u&&u.role==='admin'}
 // 자식 KR 집계 진척
 function avgChildren(krId){const k=KRS[krId];if(!k||!k.children||!k.children.length)return null;const cs=k.children.map(c=>pct(KRS[c]));return Math.round(cs.reduce((a,b)=>a+b,0)/cs.length)}
@@ -606,7 +605,7 @@ function saveUser(){const n=$('#uN').value.trim();if(!n)return alert('이름 입
 function delUser(){if(!state.editUid)return;if(!confirm('삭제하시겠습니까?'))return;const idx=USERS.findIndex(u=>u.id===state.editUid);if(idx>=0){Object.values(KRS).forEach(k=>{if(k.owner===state.editUid)k.owner=null});USERS.splice(idx,1)}saveS();cloudMeta();closeM('mUser');go('user')}
 
 // ============ SETTINGS ============
-function rViewerToggle(){const on=!!(state.settings&&state.settings.viewerMode);return `<div class="sgrp"><h3>전사 편집 잠금 (뷰어 모드)</h3><div class="desc">켜면 책임매니저 미만(선임매니저·매니저)은 열람만 가능합니다. 관리자와 책임 이상은 평소대로 편집. 12일 전사 열람 오픈 때 켜고, 19일 편집 오픈 때 끄세요.</div><div class="srow"><div><label>현재 상태</label><div class="sub">${on?'🔒 편집 잠금 ON — 책임 이하 열람만':'✏️ 편집 가능 (평상시)'}</div></div><button class="btn ${on?'':'btnp'}" onclick="setViewerMode(${on?'false':'true'})">${on?'편집 잠금 해제':'편집 잠금 켜기'}</button></div></div>`;}
+function rViewerToggle(){const on=!!(state.settings&&state.settings.viewerMode);return `<div class="sgrp"><h3>전사 편집 잠금 (뷰어 모드)</h3><div class="desc">켜면 스탭은 모두 열람만 가능합니다. 관리자만 편집할 수 있어요. 12일 전사 열람 오픈 때 켜고, 19일 편집 오픈 때 끄세요.</div><div class="srow"><div><label>현재 상태</label><div class="sub">${on?'🔒 편집 잠금 ON — 스탭 열람만(관리자만 편집)':'✏️ 편집 가능 (평상시)'}</div></div><button class="btn ${on?'':'btnp'}" onclick="setViewerMode(${on?'false':'true'})">${on?'편집 잠금 해제':'편집 잠금 켜기'}</button></div></div>`;}
 function setViewerMode(v){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만');return}if(!state.settings)state.settings={};state.settings.viewerMode=!!v;saveS();cloudMeta();go('set');}
 function rLeaders(){const L=state.leaders||{};let rows='';for(const gid in GROUPS){const g=GROUPS[gid];let opts='<option value="">(리더 없음)</option>';USERS.forEach(us=>{opts+=`<option value="${us.id}"${L[gid]===us.id?' selected':''}>${us.name}</option>`;});rows+=`<div class="srow"><div><label>${g.name}</label></div><select onchange="setLeader('${gid}',this.value)">${opts}</select></div>`;}return `<div class="sgrp"><h3>그룹·팀 리더</h3><div class="desc">그룹/팀에 맡긴 KR은 여기 지정된 리더(+관리자)만 수정할 수 있습니다.</div>${rows}</div>`;}
 function setLeader(gid,uid){const u=uById(state.cu);if(!u||u.role!=='admin'){alert('관리자만');return}if(!state.leaders)state.leaders={};if(uid)state.leaders[gid]=uid;else delete state.leaders[gid];saveS();cloudMeta();}
