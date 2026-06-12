@@ -489,7 +489,7 @@ ${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=o
 <div class="row" onclick="openKr('${ikid}')">
 <div class="expand leaf">▶</div>
 <div class="rd" style="background:${COLORS[ck.biz]};opacity:.3"></div>
-<div class="rt"><span class="rtag">하위 과제</span><span>${ik.text}</span><span class="rid">${ikid}</span></div>
+<div class="rt"><span class="rtag">과제</span><span>${ik.text}</span><span class="rid">${ikid}</span></div>
 <div class="rown">${renderOwners(ik)}</div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(ip)}%;background:${COLORS[ck.biz]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${pctTxt(ip)}</span></div>
 </div>`}).join('')}
@@ -517,7 +517,7 @@ function rBizDetail(bid){const b=BIZ[bid];const bkrs=Object.entries(KRS).filter(
 ${iks.length?`<div class="children" ${!ikex?'hidden':''}>${iks.map(ikid=>{const ik=KRS[ikid];if(!ik)return'';const ip=pct(ik);const iow=ownerInfo(ik.owner);return `<div class="row" onclick="openKr('${ikid}')">
 <div class="expand leaf">▶</div>
 <div class="rd" style="background:${COLORS[bid]};opacity:.5"></div>
-<div class="rt"><span class="rtag">하위 과제</span><span>${ik.text}</span><span class="rid">${ikid}</span></div>
+<div class="rt"><span class="rtag">과제</span><span>${ik.text}</span><span class="rid">${ikid}</span></div>
 <div class="rown">${renderOwners(ik)}</div>
 <div class="rprog"><div class="rbar"><div class="rbar-f" style="width:${pctW(ip)}%;background:${COLORS[bid]};opacity:.7"></div></div><span class="rpct pct-color ${pctCls(ip)}">${pctTxt(ip)}</span></div>
 </div>`}).join('')}</div>`:''}
